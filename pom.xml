@@ -4,9 +4,13 @@
   <groupId>br.com.desafio</groupId>
   <artifactId>entrega-mercadoria</artifactId>
   <packaging>war</packaging>
-  <version>1.0-SNAPSHOT</version>
+  <version>0.0.1-SNAPSHOT</version>
   <name>entrega-mercadoria Maven Webapp</name>
   <url>http://maven.apache.org</url>
+  <properties>
+		<jdk.version>1.7</jdk.version>
+  </properties>
+	
   <dependencies>
     <dependency>
       <groupId>junit</groupId>
@@ -14,8 +18,29 @@
       <version>3.8.1</version>
       <scope>test</scope>
     </dependency>
+    <dependency>
+    	<groupId>javax.servlet</groupId>
+    	<artifactId>servlet-api</artifactId>
+    	<version>2.3</version>
+    	<type>jar</type>
+    	<scope>provided</scope>
+    </dependency>
   </dependencies>
   <build>
     <finalName>entrega-mercadoria</finalName>
+    
+	<plugins>
+    <!-- Set JDK Compiler Level -->
+	  <plugin>
+		<groupId>org.apache.maven.plugins</groupId>
+		<artifactId>maven-compiler-plugin</artifactId>
+		<version>2.3.2</version>
+		<configuration>
+			<source>${jdk.version}</source>
+			<target>${jdk.version}</target>
+		</configuration>
+	  </plugin>
+	</plugins>
+		  
   </build>
 </project>
