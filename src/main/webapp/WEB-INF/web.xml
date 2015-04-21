@@ -5,5 +5,22 @@ xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j
 version="2.4">
 
 	<display-name>Entrega de mercadorias</display-name>
+	
+	<context-param>
+        <param-name>contextConfigLocation</param-name>
+        <param-value>classpath:spring.xml</param-value>
+    </context-param>
+	<context-param>
+		<param-name>spring.profiles.default</param-name>
+		<param-value>main</param-value>
+	</context-param>
+
+    <listener>
+        <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+    </listener>
+    
+     <listener>
+        <listener-class>br.com.desafio.entregamercadoria.listener.DbConfigListener</listener-class>
+    </listener>
     
  </web-app>
