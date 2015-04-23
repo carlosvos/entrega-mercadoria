@@ -13,5 +13,6 @@
 			<!-- Classes para injeção de log -->
 			<context:include-filter type="regex" expression="br\.com\.desafio\.logger\.spring.*"/>
 		</context:component-scan>
-
+		
+		<import resource="spring-services.xml"/>
 </beans>

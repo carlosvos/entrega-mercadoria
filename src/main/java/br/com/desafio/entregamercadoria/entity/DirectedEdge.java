@@ -47,8 +47,19 @@ public class DirectedEdge {
         this.w = w;
         this.weight = weight;
     }
+    
+    public DirectedEdge(double weight, String origem, String destino) {
+		super();
+		this.weight = weight;
+		this.origem = origem;
+		this.destino = destino;
+		this.v = 0;
+        this.w = 0;
+	}
 
-    /**
+
+
+	/**
      * Returns the tail vertex of the directed edge.
      * @return the tail vertex of the directed edge
      */

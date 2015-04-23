@@ -1,6 +1,8 @@
 package br.com.desafio.entregamercadoria.dao.impl;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -10,8 +12,10 @@ import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
 import org.neo4j.graphdb.RelationshipType;
 import org.neo4j.graphdb.ResourceIterable;
+import org.neo4j.graphdb.Result;
 import org.neo4j.graphdb.Transaction;
 import org.neo4j.graphdb.index.Index;
+import org.neo4j.helpers.collection.IteratorUtil;
 import org.neo4j.tooling.GlobalGraphOperations;
 import org.springframework.stereotype.Repository;
 
@@ -30,51 +34,65 @@ public class EdgeWeightedDigraphDAOImpl extends Neo4jDAO implements EdgeWeighted
 	@Override
 	public void save(String nomMapa, List<DirectedEdge> rotas) {
 	    GraphDatabaseService graphDb = this.getGraphDatabase(nomMapa);
-	    indexService = graphDb.index().forNodes( "nodes" );
 	    
-        Transaction tx = graphDb.beginTx();
-
-        for(DirectedEdge rota : rotas){
-    		
-            Node firstNode = this.getOrCreateNode(rota.getOrigem(), graphDb);
-            Node secondNode = this.getOrCreateNode(rota.getDestino(), graphDb);
-            
-            Relationship relationship = firstNode.createRelationshipTo( secondNode, TEM_ROTA_PARA );
-            relationship.setProperty( "distancia", rota.weight());
-                    
-    	}
-
-        tx.success();
+        try(Transaction tx = graphDb.beginTx()){
+        
+		    indexService = graphDb.index().forNodes( "nodes" );
+	
+		    for(DirectedEdge rota : rotas){
+	    		
+	            Node firstNode = this.getOrCreateNode(rota.getOrigem(), graphDb);
+	            Node secondNode = this.getOrCreateNode(rota.getDestino(), graphDb);
+	            
+	            Relationship relationship = firstNode.createRelationshipTo( secondNode, TEM_ROTA_PARA );
+	            relationship.setProperty( "distancia", rota.weight());
+	                    
+	    	}
+	
+	        tx.success();
+	        
+        }
 	}
 
 	@Override
 	public EdgeWeightedDigraph findByNomMapa(String nomMapa) {
 	    GraphDatabaseService graphDb = this.getGraphDatabase(nomMapa);
-        Transaction tx = graphDb.beginTx();
+	    EdgeWeightedDigraph mapaRotas = null;
+	    
+        try ( Transaction tx = graphDb.beginTx();
+        	      Result result = graphDb.execute( "match (n) return n" ) )
+        	{
+    	    	List<Node> nodes = new ArrayList<>();
+	        	Iterator<Node> n_column = result.columnAs( "n" );
+	        	for ( Node node : IteratorUtil.asIterable( n_column ) )
+	        	{
+	        		nodes.add(node);
+	        	}
 
-	    ResourceIterable<Node> nodes =  GlobalGraphOperations.at(graphDb).getAllNodes();
-
-	    Map<String, Integer> mapLocalIndex = createMapaLocaisIndexados(nodes);
-	    
-	    EdgeWeightedDigraph mapaRotas = new EdgeWeightedDigraph(mapLocalIndex.size());
-	    
-	    for(Node node : nodes){
-	    	String origem = node.getProperty("local").toString();
-	    	int v = mapLocalIndex.get(origem);
-	    	
-	    	for(Relationship rota : node.getRelationships(TEM_ROTA_PARA)){
-	    		String destino = rota.getEndNode().getProperty("local").toString();
-	    		int w = mapLocalIndex.get(destino);
-	    		
-	    		DirectedEdge edge = new DirectedEdge(v, w, Integer.parseInt(rota.getProperty("distancia").toString()));
-	    		edge.setOrigem(origem);
-	    		edge.setDestino(destino);
-	    		
-	    		mapaRotas.addEdge(edge);
-	    	}
-	    }
-	    
-        tx.success();
+		        //List<Node> nodes =  this.getAllNodes(graphDb);
+		
+			    Map<String, Integer> mapLocalIndex = createMapaLocaisIndexados(nodes);
+			    
+			    mapaRotas = new EdgeWeightedDigraph(mapLocalIndex.size());
+			    
+			    for(Node node : nodes){
+			    	String origem = node.getProperty("local").toString();
+			    	int v = mapLocalIndex.get(origem);
+			    	
+			    	for(Relationship rota : node.getRelationships(TEM_ROTA_PARA)){
+			    		String destino = rota.getEndNode().getProperty("local").toString();
+			    		int w = mapLocalIndex.get(destino);
+			    		
+			    		DirectedEdge edge = new DirectedEdge(v, w, Double.parseDouble(rota.getProperty("distancia").toString()));
+			    		edge.setOrigem(origem);
+			    		edge.setDestino(destino);
+			    		
+			    		mapaRotas.addEdge(edge);
+			    	}
+			    }
+			    
+		        tx.success();
+        	}
 
 	    return mapaRotas;
 	}
@@ -91,8 +109,8 @@ public class EdgeWeightedDigraphDAOImpl extends Neo4jDAO implements EdgeWeighted
         return node;
     }
 	
-	private Map<String, Integer> createMapaLocaisIndexados(ResourceIterable<Node> nodes){
-		Map<String, Integer> mapaLocaisIndexados = new HashMap<>();
+	private Map<String, Integer> createMapaLocaisIndexados(List<Node> nodes){
+		Map<String, Integer> mapaLocaisIndexados = new HashMap<String, Integer>();
 	    
 		int count = 0;
 	    for(Node node : nodes){
@@ -100,6 +118,17 @@ public class EdgeWeightedDigraphDAOImpl extends Neo4jDAO implements EdgeWeighted
 	    }
 	    
 	    return mapaLocaisIndexados;
+	}
+	
+	private List<Node> getAllNodes(GraphDatabaseService graphDb){
+		List<Node> listNodes = new ArrayList<>();
+		
+	    ResourceIterable<Node> nodes =  GlobalGraphOperations.at(graphDb).getAllNodes();
+	    for(Node node : nodes){
+	    	listNodes.add(node);
+	    }
+	    
+	    return listNodes;
 	}
 
 }

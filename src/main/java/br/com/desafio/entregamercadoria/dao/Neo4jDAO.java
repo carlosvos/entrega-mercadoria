@@ -5,19 +5,19 @@ import java.util.Map;
 
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.factory.GraphDatabaseFactory;
+import org.springframework.beans.factory.annotation.Value;
 
 public abstract class Neo4jDAO {
 	
 	private static final Map<String, GraphDatabaseService> DB_MAP = new HashMap<String, GraphDatabaseService>();
 	
-    private static final String DB_PATH = "src/main/resources/";
-
+	private String dbPath;
 	
 	protected GraphDatabaseService getGraphDatabase(String databaseName ){
 		GraphDatabaseService db = DB_MAP.get(databaseName);
 		
 		if(db == null){
-			db = new GraphDatabaseFactory().newEmbeddedDatabase( DB_PATH.concat(databaseName) );
+			db = new GraphDatabaseFactory().newEmbeddedDatabase( this.dbPath.concat(databaseName) );
 	        registerShutdownHook( db );
 	        DB_MAP.put(databaseName, db);
 		}
@@ -45,4 +45,13 @@ public abstract class Neo4jDAO {
     	return DB_MAP;
     }
 
+	public String getDbPath() {
+		return dbPath;
+	}
+
+	@Value("${dataBase.path}")
+	private void setDbPath(String dbPath) {
+		this.dbPath = dbPath;
+	}
+    
 }
