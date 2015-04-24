@@ -1,6 +1,8 @@
 package br.com.desafio.entregamercadoria.service.impl;
 
+import java.io.IOException;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Stack;
@@ -17,10 +19,12 @@ import javax.ws.rs.core.Response.ResponseBuilder;
 import org.springframework.stereotype.Service;
 
 import br.com.desafio.entregamercadoria.business.MalhaLogisticaBusiness;
+import br.com.desafio.entregamercadoria.business.exception.ValidationException;
 import br.com.desafio.entregamercadoria.business.to.RotaTO;
 import br.com.desafio.entregamercadoria.service.RotaService;
 import br.com.desafio.entregamercadoria.service.vo.CadastraMalhaLogisticaInputVO;
 import br.com.desafio.entregamercadoria.service.vo.ConsultaMenorCaminhoInputVO;
+import br.com.desafio.entregamercadoria.service.vo.RotaInputVO;
 
 @Service
 @Path("/")
@@ -28,6 +32,10 @@ public class RotaServiceImpl implements RotaService{
 	
 	private static final String CHARSET_UTF8 = "charset=UTF-8";
 	private final String MSG_MENOR_CAMINHO = "Rota {0} com custo de {1}";
+	private final String MSG_CADASTRO_MALHA_LOGISTICA_SUCESSO = "Malha logistica cadastrada com sucesso";
+	private final String MSG_CADASTRO_MALHA_LOGISTICA_ERRO = "Não foi possível realizar o cadastro da malha logistica. [ {0} ]";
+	private final String MSG_ERRO_IO = "Problemas de acesso aos dados salvos em banco.";
+	private final String MSG_ERRO_INESPERADO = "Erro inesperado.";
 
 	@Resource
 	private MalhaLogisticaBusiness malhaLogisticaBusiness;
@@ -40,14 +48,26 @@ public class RotaServiceImpl implements RotaService{
 	public Response cadastraMalhaLogistica(CadastraMalhaLogisticaInputVO input) {
 		
 		ResponseBuilder responseBuilder = null;
+		
+		List<RotaTO> rotas = new ArrayList<>();
+		for(RotaInputVO rotaInput : input.getRotas()){
+			rotas.add(this.parseRotaInputVOtoRotaTO(rotaInput));
+		}
 
 		try {           
-			malhaLogisticaBusiness.cadastraMalhaLogistica(input);
-			responseBuilder =  Response.ok();			
+			malhaLogisticaBusiness.cadastraMalhaLogistica(input.getNomMalhaLogistica(), rotas);
+			responseBuilder =  Response.ok(MSG_CADASTRO_MALHA_LOGISTICA_SUCESSO);			
+		}catch (ValidationException | IllegalArgumentException e){
+			responseBuilder = Response.serverError();
+			responseBuilder.entity( MessageFormat.format(MSG_CADASTRO_MALHA_LOGISTICA_ERRO, e.getMessage()));
+		}
+		catch (IOException e){
+			responseBuilder = Response.serverError();
+			responseBuilder.entity( MessageFormat.format(MSG_CADASTRO_MALHA_LOGISTICA_ERRO, MSG_ERRO_IO));
 		}
 		catch (Exception e) {
 			responseBuilder = Response.serverError();
-			responseBuilder.entity(e.getMessage());			
+			responseBuilder.entity( MessageFormat.format(MSG_CADASTRO_MALHA_LOGISTICA_ERRO, MSG_ERRO_INESPERADO));			
 		}
 				
 		return responseBuilder.build();
@@ -69,10 +89,17 @@ public class RotaServiceImpl implements RotaService{
             		input.getDestino());
             Double custoPercurso = malhaLogisticaBusiness.calcularCustoPercurso(menorCaminho, input.getAutonomia(), input.getVlrCombustivel());
 			responseBuilder =  Response.ok(mensagemFormatada(menorCaminho, custoPercurso));			
+		}catch (ValidationException | IllegalArgumentException e){
+			responseBuilder = Response.serverError();
+			responseBuilder.entity( MessageFormat.format(MSG_CADASTRO_MALHA_LOGISTICA_ERRO, e.getMessage()));
+		}
+		catch (IOException e){
+			responseBuilder = Response.serverError();
+			responseBuilder.entity( MessageFormat.format(MSG_CADASTRO_MALHA_LOGISTICA_ERRO, MSG_ERRO_IO));
 		}
 		catch (Exception e) {
 			responseBuilder = Response.serverError();
-			responseBuilder.entity(e.getMessage());			
+			responseBuilder.entity( MessageFormat.format(MSG_CADASTRO_MALHA_LOGISTICA_ERRO, MSG_ERRO_INESPERADO));			
 		}
 				
 		return responseBuilder.build();
@@ -108,6 +135,10 @@ public class RotaServiceImpl implements RotaService{
 		String locais = sbLocais.toString();
 
 		return MessageFormat.format(MSG_MENOR_CAMINHO, locais, custoPercurso);
+	}
+	
+	private RotaTO parseRotaInputVOtoRotaTO(RotaInputVO rotaInput){
+		return new RotaTO(rotaInput.getOrigem(), rotaInput.getDestino(), rotaInput.getDistancia());
 	}
 
 }

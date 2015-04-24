@@ -1,5 +1,6 @@
 package br.com.desafio.entregamercadoria.dao.impl;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -11,12 +12,10 @@ import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
 import org.neo4j.graphdb.RelationshipType;
-import org.neo4j.graphdb.ResourceIterable;
 import org.neo4j.graphdb.Result;
 import org.neo4j.graphdb.Transaction;
 import org.neo4j.graphdb.index.Index;
 import org.neo4j.helpers.collection.IteratorUtil;
-import org.neo4j.tooling.GlobalGraphOperations;
 import org.springframework.stereotype.Repository;
 
 import br.com.desafio.entregamercadoria.dao.EdgeWeightedDigraphDAO;
@@ -32,7 +31,7 @@ public class EdgeWeightedDigraphDAOImpl extends Neo4jDAO implements EdgeWeighted
     private static RelationshipType TEM_ROTA_PARA = DynamicRelationshipType.withName( "TEM_ROTA_PARA" );
 
 	@Override
-	public void save(String nomMapa, List<DirectedEdge> rotas) {
+	public void save(String nomMapa, List<DirectedEdge> rotas) throws IOException{
 	    GraphDatabaseService graphDb = this.getGraphDatabase(nomMapa);
 	    
         try(Transaction tx = graphDb.beginTx()){
@@ -55,7 +54,7 @@ public class EdgeWeightedDigraphDAOImpl extends Neo4jDAO implements EdgeWeighted
 	}
 
 	@Override
-	public EdgeWeightedDigraph findByNomMapa(String nomMapa) {
+	public EdgeWeightedDigraph findByNomMapa(String nomMapa) throws IOException{
 	    GraphDatabaseService graphDb = this.getGraphDatabase(nomMapa);
 	    EdgeWeightedDigraph mapaRotas = null;
 	    
@@ -69,8 +68,6 @@ public class EdgeWeightedDigraphDAOImpl extends Neo4jDAO implements EdgeWeighted
 	        		nodes.add(node);
 	        	}
 
-		        //List<Node> nodes =  this.getAllNodes(graphDb);
-		
 			    Map<String, Integer> mapLocalIndex = createMapaLocaisIndexados(nodes);
 			    
 			    mapaRotas = new EdgeWeightedDigraph(mapLocalIndex.size());
@@ -119,16 +116,4 @@ public class EdgeWeightedDigraphDAOImpl extends Neo4jDAO implements EdgeWeighted
 	    
 	    return mapaLocaisIndexados;
 	}
-	
-	private List<Node> getAllNodes(GraphDatabaseService graphDb){
-		List<Node> listNodes = new ArrayList<>();
-		
-	    ResourceIterable<Node> nodes =  GlobalGraphOperations.at(graphDb).getAllNodes();
-	    for(Node node : nodes){
-	    	listNodes.add(node);
-	    }
-	    
-	    return listNodes;
-	}
-
 }

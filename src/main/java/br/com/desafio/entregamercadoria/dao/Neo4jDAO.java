@@ -10,10 +10,9 @@ import org.springframework.beans.factory.annotation.Value;
 public abstract class Neo4jDAO {
 	
 	private static final Map<String, GraphDatabaseService> DB_MAP = new HashMap<String, GraphDatabaseService>();
-	
 	private String dbPath;
 	
-	protected GraphDatabaseService getGraphDatabase(String databaseName ){
+	protected GraphDatabaseService getGraphDatabase(String databaseName) throws IllegalArgumentException{
 		GraphDatabaseService db = DB_MAP.get(databaseName);
 		
 		if(db == null){

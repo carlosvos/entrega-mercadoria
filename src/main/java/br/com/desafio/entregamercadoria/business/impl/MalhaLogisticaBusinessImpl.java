@@ -1,5 +1,6 @@
 package br.com.desafio.entregamercadoria.business.impl;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
@@ -7,15 +8,19 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.IteratorUtils;
+import org.apache.commons.lang3.Validate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import br.com.desafio.entregamercadoria.business.MalhaLogisticaBusiness;
+import br.com.desafio.entregamercadoria.business.exception.ValidationException;
 import br.com.desafio.entregamercadoria.business.to.RotaTO;
 import br.com.desafio.entregamercadoria.dao.EdgeWeightedDigraphDAO;
 import br.com.desafio.entregamercadoria.entity.DirectedEdge;
 import br.com.desafio.entregamercadoria.entity.EdgeWeightedDigraph;
-import br.com.desafio.entregamercadoria.service.vo.CadastraMalhaLogisticaInputVO;
-import br.com.desafio.entregamercadoria.service.vo.RotaInputVO;
 import br.com.desafio.entregamercadoria.utils.DijkstraSP;
 
 @Service
@@ -24,24 +29,43 @@ public class MalhaLogisticaBusinessImpl implements MalhaLogisticaBusiness {
 	@Resource
 	private EdgeWeightedDigraphDAO edgeWeightedDigraphDAO;
 	
-	public void cadastraMalhaLogistica(CadastraMalhaLogisticaInputVO input){
-		String nomeMapa = input.getNomMalhaLogistica();
-		List<DirectedEdge> rotas = new ArrayList<>();
+	private static final Logger LOG = LoggerFactory.getLogger(MalhaLogisticaBusinessImpl.class);
+	
+	private static final String MSG_NOME_MAPA_INVALIDO = "O nome do mapa não pode ser vazio ou nulo.";
+	private static final String MSG_ORIGEM_INVALIDA = "O local de origem não pode ser vazio ou nulo.";
+	private static final String MSG_DESTINO_INVALIDO = "O local de destino não pode ser vazio ou nulo.";
+
+	private static final String MSG_DISTANCIA_NEGATIVA = "O valor da distância não pode ser negativa. [Rota {0} -> {1}]";
+	private static final String MSG_AUTONOMIA_ZERO_NEGATIVA = "O valor da autonomia não pode ser menor ou igual a zero.";
+	private static final String MSG_PRECO_COMBUSTIVEL_ZERO_NEGATIVO = "O preço do combustível não pode ser menor ou igual a zero.";
+	
+	private static final String MSG_MAPA_SEM_ROTAS = "Nenhuma rota foi encontrada para o mapa '{0}'.";
+	private static final String MSG_LOCAL_SEM_ROTAS = "Nenhuma rota para {0} foi encontrada.";
+	private static final String MSG_ORIGEM_DESTINO_SEM_ROTAS = "Nenhuma rota de {0} para {1} foi encontrada.";
+	
+	@Override
+	public void cadastraMalhaLogistica(String nomeMapa, List<RotaTO> listRotasTO) throws IOException, ValidationException{
 		
-		for(RotaInputVO rotaInput : input.getRotas()){
-			rotas.add(this.parseRotaInputVOtoDirectedEdge(rotaInput));
-		}
-		
+		Validate.notBlank(nomeMapa,MSG_NOME_MAPA_INVALIDO);
+
 		try{
+			List<DirectedEdge> rotas = new ArrayList<>();
+			for(RotaTO rotaTO : listRotasTO){
+				rotas.add(this.parseRotaTOtoDirectedEdge(rotaTO));
+			}
+		
 			edgeWeightedDigraphDAO.save(nomeMapa, rotas);
 		}catch(Exception e){
-			e.printStackTrace();
-			System.out.println(e.getMessage());
+			LOG.error(e.getMessage(),e);
+			throw e;
 		}
 	}
 
-	private DirectedEdge parseRotaInputVOtoDirectedEdge(RotaInputVO rotaInput) {
-		return new DirectedEdge(rotaInput.getDistancia(), rotaInput.getOrigem(), rotaInput.getDestino());
+	private DirectedEdge parseRotaTOtoDirectedEdge(RotaTO rotaTO) throws ValidationException{
+		Validate.notBlank(rotaTO.getOrigem(),MSG_ORIGEM_INVALIDA);
+		Validate.notBlank(rotaTO.getDestino(),MSG_DESTINO_INVALIDO);
+		Validate.isTrue(rotaTO.getDistancia() < 0, MSG_DISTANCIA_NEGATIVA, rotaTO.getOrigem(), rotaTO.getDestino() );
+		return new DirectedEdge(rotaTO.getDistancia(), rotaTO.getOrigem(), rotaTO.getDestino());
 	}
 	
 	private RotaTO parseDirectedEdgetoRotaTO(DirectedEdge edge) {
@@ -49,32 +73,50 @@ public class MalhaLogisticaBusinessImpl implements MalhaLogisticaBusiness {
 	}
 	
 	@Override
-	public List<RotaTO> consultarMenorCaminho(String nomeMapa, String origem, String destino){
-		EdgeWeightedDigraph malhaLogistica = edgeWeightedDigraphDAO.findByNomMapa(nomeMapa);
+	public List<RotaTO> consultarMenorCaminho(String nomeMapa, String origem, String destino) throws IOException, ValidationException{
 		
-		Iterator<DirectedEdge> rotasIterator = malhaLogistica.edges().iterator();
-		int indexOrigem = this.getLocalIndex(origem, rotasIterator);
+		Validate.notBlank(nomeMapa,MSG_NOME_MAPA_INVALIDO);
+		Validate.notBlank(origem,MSG_ORIGEM_INVALIDA);
+		Validate.notBlank(destino,MSG_DESTINO_INVALIDO);
 		
-		rotasIterator = malhaLogistica.edges().iterator();
-		int indexDestino = this.getLocalIndex(destino, rotasIterator);
+		try{
+			EdgeWeightedDigraph malhaLogistica = edgeWeightedDigraphDAO.findByNomMapa(nomeMapa);
 
-		DijkstraSP shortPathUtils = new DijkstraSP(malhaLogistica, indexOrigem);
+			List<DirectedEdge> rotas = IteratorUtils.toList(malhaLogistica.edges().iterator());
+			if(CollectionUtils.isEmpty(rotas)){
+				throw new ValidationException(MSG_MAPA_SEM_ROTAS, nomeMapa);
+			}
+			
+			int indexOrigem = this.getLocalIndex(origem, rotas);
+			int indexDestino = this.getLocalIndex(destino, rotas);
+	
+			DijkstraSP shortPathUtils = new DijkstraSP(malhaLogistica, indexOrigem);
+			
+			Iterator<DirectedEdge> menorCaminho = shortPathUtils.pathTo(indexDestino).iterator();
+			
+			ArrayList<RotaTO> rotasMenorCaminho = new ArrayList<>();
+			while (menorCaminho.hasNext()) {
+				DirectedEdge edge = menorCaminho.next();
+				rotasMenorCaminho.add(this.parseDirectedEdgetoRotaTO(edge));
+			}
+			if(CollectionUtils.isEmpty(rotasMenorCaminho)){
+				throw new ValidationException(MSG_ORIGEM_DESTINO_SEM_ROTAS, origem, destino);
+			}
+			Collections.reverse(rotas);
+			
+			return rotasMenorCaminho;
 		
-		Iterator<DirectedEdge> menorCaminho = shortPathUtils.pathTo(indexDestino).iterator();
-		
-		ArrayList<RotaTO> rotas = new ArrayList<>();
-		while (menorCaminho.hasNext()) {
-			DirectedEdge edge = menorCaminho.next();
-			rotas.add(this.parseDirectedEdgetoRotaTO(edge));
+		}catch(Exception e){
+			LOG.error(e.getMessage(),e);
+			throw e;
 		}
-		Collections.reverse(rotas);
-		
-		return rotas;
 		
 	}
 
 	@Override
 	public Double calcularCustoPercurso(Double distancia, Double autonomia, Double precoCombustivel){
+		Validate.isTrue(autonomia <= 0, MSG_AUTONOMIA_ZERO_NEGATIVA);
+		Validate.isTrue(precoCombustivel <= 0, MSG_PRECO_COMBUSTIVEL_ZERO_NEGATIVO);
 		return (distancia / autonomia) * precoCombustivel;
 	}
 	
@@ -88,17 +130,20 @@ public class MalhaLogisticaBusinessImpl implements MalhaLogisticaBusiness {
 		return this.calcularCustoPercurso(distancia, autonomia, precoCombustivel);
 	}
 	
-	private int getLocalIndex(String local, Iterator<DirectedEdge> rotasIterator){
-		int index = 0;
+	private int getLocalIndex(String local, List<DirectedEdge> rotas) throws ValidationException{
+		Integer index = null;
 		
-		while(rotasIterator.hasNext()){
-			DirectedEdge rota = rotasIterator.next();
+		for(DirectedEdge rota : rotas){
 			if(rota.getOrigem().equalsIgnoreCase(local)){
 				index = rota.from();
+				break;
 			}
+		}
+		
+		if(index == null){
+			throw new ValidationException(MSG_LOCAL_SEM_ROTAS,local);
 		}
 		
 		return index;
 	}
-
 }

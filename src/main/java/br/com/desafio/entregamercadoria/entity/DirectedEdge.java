@@ -50,6 +50,7 @@ public class DirectedEdge {
     
     public DirectedEdge(double weight, String origem, String destino) {
 		super();
+        if (Double.isNaN(weight)) throw new IllegalArgumentException("Weight is NaN");
 		this.weight = weight;
 		this.origem = origem;
 		this.destino = destino;
