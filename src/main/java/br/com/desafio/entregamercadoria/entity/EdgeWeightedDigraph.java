@@ -217,14 +217,4 @@ public class EdgeWeightedDigraph {
         return s.toString();
     }
 
-    /**
-     * Unit tests the <tt>EdgeWeightedDigraph</tt> data type.
-     */
-    public static void main(String[] args) {
-    	//In in = new In(args[0]);
-        //EdgeWeightedDigraph G = new EdgeWeightedDigraph(in);
-        //System.out.println(G);
-    }
-
 }
-

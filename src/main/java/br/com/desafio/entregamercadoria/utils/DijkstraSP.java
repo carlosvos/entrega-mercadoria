@@ -193,35 +193,4 @@ public class DijkstraSP {
         return true;
     }
 
-
-    /**
-     * Unit tests the <tt>DijkstraSP</tt> data type.
-     */
-    public static void main(String[] args) {
-    	int v = Integer.parseInt(args[0]);
-    	int w = Integer.parseInt(args[1]);
-        EdgeWeightedDigraph G = new EdgeWeightedDigraph(v,w);
-        int s = Integer.parseInt(args[2]);
-
-        // compute shortest paths
-        DijkstraSP sp = new DijkstraSP(G, s);
-
-
-        // print shortest path
-        for (int t = 0; t < G.V(); t++) {
-            if (sp.hasPathTo(t)) {
-                System.out.printf("%d to %d (%.2f)  ", s, t, sp.distTo(t));
-                if (sp.hasPathTo(t)) {
-                    for (DirectedEdge e : sp.pathTo(t)) {
-                    	System.out.print(e + "   ");
-                    }
-                }
-                System.out.println();
-            }
-            else {
-            	System.out.printf("%d to %d         no path\n", s, t);
-            }
-        }
-    }
-
 }

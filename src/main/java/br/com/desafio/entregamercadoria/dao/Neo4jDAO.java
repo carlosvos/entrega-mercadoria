@@ -5,6 +5,7 @@ import java.util.Map;
 
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.factory.GraphDatabaseFactory;
+import org.neo4j.graphdb.factory.GraphDatabaseSettings;
 import org.springframework.beans.factory.annotation.Value;
 
 public abstract class Neo4jDAO {
@@ -16,7 +17,10 @@ public abstract class Neo4jDAO {
 		GraphDatabaseService db = DB_MAP.get(databaseName);
 		
 		if(db == null){
-			db = new GraphDatabaseFactory().newEmbeddedDatabase( this.dbPath.concat(databaseName) );
+			db = new GraphDatabaseFactory().newEmbeddedDatabaseBuilder( this.dbPath.concat(databaseName) )
+					.setConfig(GraphDatabaseSettings.keep_logical_logs, "false")
+					.setConfig(GraphDatabaseSettings.keep_logical_logs, "1 files")
+					.newGraphDatabase();
 	        registerShutdownHook( db );
 	        DB_MAP.put(databaseName, db);
 		}

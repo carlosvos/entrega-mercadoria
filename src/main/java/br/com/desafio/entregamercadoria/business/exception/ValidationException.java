@@ -14,8 +14,8 @@ public class ValidationException extends Exception{
         super(msg);
     }
     
-    public ValidationException(String msg,  Object... arguments) {
-        super(MessageFormat.format(msg, arguments));
+    public ValidationException(String msg, Object... args) {
+        super(MessageFormat.format(msg, args));
     }
     
 	/**

@@ -59,7 +59,7 @@ public class EdgeWeightedDigraphDAOImpl extends Neo4jDAO implements EdgeWeighted
 	    EdgeWeightedDigraph mapaRotas = null;
 	    
         try ( Transaction tx = graphDb.beginTx();
-        	      Result result = graphDb.execute( "match (n) return n" ) )
+        	      Result result = graphDb.execute( "match (n) WHERE HAS (n.local) return n" ); )
         	{
     	    	List<Node> nodes = new ArrayList<>();
 	        	Iterator<Node> n_column = result.columnAs( "n" );

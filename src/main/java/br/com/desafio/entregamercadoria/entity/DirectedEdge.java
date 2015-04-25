@@ -105,17 +105,8 @@ public class DirectedEdge {
      * @return a string representation of the directed edge
      */
     public String toString() {
-        return origem + "->" + destino + " " + String.format("%5.2f", weight);
+        return v + "->" + w + " " + String.format("%5.2f", weight);
     }
     
-    
-
-    /**
-     * Unit tests the <tt>DirectedEdge</tt> data type.
-     */
-    public static void main(String[] args) {
-        DirectedEdge e = new DirectedEdge(12, 23, 3.14);
-        System.out.println(e);
-    }
 }
 
