@@ -18,9 +18,9 @@ import org.springframework.stereotype.Service;
 import br.com.desafio.entregamercadoria.business.MalhaLogisticaBusiness;
 import br.com.desafio.entregamercadoria.business.exception.ValidationException;
 import br.com.desafio.entregamercadoria.business.to.RotaTO;
-import br.com.desafio.entregamercadoria.dao.EdgeWeightedDigraphDAO;
-import br.com.desafio.entregamercadoria.entity.DirectedEdge;
-import br.com.desafio.entregamercadoria.entity.EdgeWeightedDigraph;
+import br.com.desafio.entregamercadoria.dao.MalhaLogisticaDAO;
+import br.com.desafio.entregamercadoria.entity.Rota;
+import br.com.desafio.entregamercadoria.entity.MalhaLogistica;
 import br.com.desafio.entregamercadoria.utils.DijkstraSP;
 
 /**
@@ -34,7 +34,7 @@ import br.com.desafio.entregamercadoria.utils.DijkstraSP;
 public class MalhaLogisticaBusinessImpl implements MalhaLogisticaBusiness {
 	
 	@Resource
-	private EdgeWeightedDigraphDAO edgeWeightedDigraphDAO;
+	private MalhaLogisticaDAO malhaLogisticaDAO;
 	
 	private static final Logger LOG = LoggerFactory.getLogger(MalhaLogisticaBusinessImpl.class);
 	
@@ -55,12 +55,12 @@ public class MalhaLogisticaBusinessImpl implements MalhaLogisticaBusiness {
 		try{
 			Validate.notBlank(nomeMapa,MSG_NOME_MAPA_INVALIDO);
 
-			List<DirectedEdge> rotas = new ArrayList<>();
+			List<Rota> rotas = new ArrayList<>();
 			for(RotaTO rotaTO : listRotasTO){
 				rotas.add(this.parseRotaTOtoDirectedEdge(rotaTO));
 			}
 		
-			edgeWeightedDigraphDAO.save(nomeMapa, rotas);
+			malhaLogisticaDAO.save(nomeMapa, rotas);
 		}catch(Exception e){
 			LOG.error(e.getMessage(),e);
 			throw e;
@@ -68,11 +68,11 @@ public class MalhaLogisticaBusinessImpl implements MalhaLogisticaBusiness {
 	}
 
 	/**
-	 * Converte o objeto de entrada {@link RotaTO} para a entidade {@link DirectedEdge} que sera utilizada
+	 * Converte o objeto de entrada {@link RotaTO} para a entidade {@link Rota} que sera utilizada
 	 * como referência para persistência das informções referentes a rota.
 	 * 
 	 * @param rotaTO objeto de entrada contendo as informações de origem, destino e distância de um rota.
-	 * @return entidade {@link DirectedEdge} utilizada para recuperação dos dados que serão salvos na base de dados.
+	 * @return entidade {@link Rota} utilizada para recuperação dos dados que serão salvos na base de dados.
 	 * @throws ValidationException exceção lançada caso ocorra um dos sequintes erros de validação:
 	 * <ul>
 	 * <li>valor de origem do objeto {@link RotaTO} seja nulo ou vazio;</li>
@@ -80,21 +80,21 @@ public class MalhaLogisticaBusinessImpl implements MalhaLogisticaBusiness {
  	 * <li>valor da distância do objeto {@link RotaTO} seja menor que zero</li>
  	 * </ul>
 	 */
-	private DirectedEdge parseRotaTOtoDirectedEdge(RotaTO rotaTO) throws ValidationException{
+	private Rota parseRotaTOtoDirectedEdge(RotaTO rotaTO) throws ValidationException{
 		Validate.notBlank(rotaTO.getOrigem(),MSG_ORIGEM_INVALIDA);
 		Validate.notBlank(rotaTO.getDestino(),MSG_DESTINO_INVALIDO);
 		Validate.isTrue(rotaTO.getDistancia() >= 0, MSG_DISTANCIA_NEGATIVA, rotaTO.getOrigem(), rotaTO.getDestino() );
-		return new DirectedEdge(rotaTO.getDistancia(), rotaTO.getOrigem(), rotaTO.getDestino());
+		return new Rota(rotaTO.getDistancia(), rotaTO.getOrigem(), rotaTO.getDestino());
 	}
 	
 	/**
-	 * Converte a entidade {@link DirectedEdge} para um objeto {@link RotaTO} que será utilizado para construção 
+	 * Converte a entidade {@link Rota} para um objeto {@link RotaTO} que será utilizado para construção 
 	 * da mensagem de retorno.
 	 * 
-	 * @param edge entidade {@link DirectedEdge} correspondente ao registro de uma rota.
+	 * @param edge entidade {@link Rota} correspondente ao registro de uma rota.
 	 * @return objeto {@link RotaTO} contendo as mesmas informações da entidade passada como parâmetro.
 	 */
-	private RotaTO parseDirectedEdgetoRotaTO(DirectedEdge edge) {
+	private RotaTO parseDirectedEdgetoRotaTO(Rota edge) {
 		return new RotaTO(edge.getOrigem(),edge.getDestino(),edge.weight());
 	}
 	
@@ -106,9 +106,9 @@ public class MalhaLogisticaBusinessImpl implements MalhaLogisticaBusiness {
 			Validate.notBlank(origem,MSG_ORIGEM_INVALIDA);
 			Validate.notBlank(destino,MSG_DESTINO_INVALIDO);
 		
-			EdgeWeightedDigraph malhaLogistica = edgeWeightedDigraphDAO.findByNomMapa(nomeMapa);
+			MalhaLogistica malhaLogistica = malhaLogisticaDAO.findByNomMapa(nomeMapa);
 
-			List<DirectedEdge> rotas = IteratorUtils.toList(malhaLogistica.edges().iterator());
+			List<Rota> rotas = IteratorUtils.toList(malhaLogistica.getRotas().iterator());
 			if(CollectionUtils.isEmpty(rotas)){
 				throw new ValidationException(MSG_MAPA_SEM_ROTAS, nomeMapa);
 			}
@@ -118,19 +118,19 @@ public class MalhaLogisticaBusinessImpl implements MalhaLogisticaBusiness {
 	
 			DijkstraSP shortPathUtils = new DijkstraSP(malhaLogistica, indexOrigem);
 			
-			Iterable<DirectedEdge> iterableMenorCaminho = shortPathUtils.pathTo(indexDestino);
+			Iterable<Rota> iterableMenorCaminho = shortPathUtils.pathTo(indexDestino);
 			if(iterableMenorCaminho == null){
 				throw new ValidationException(MSG_ORIGEM_DESTINO_SEM_ROTAS, origem, destino);
 			}
 			
-			Iterator<DirectedEdge> menorCaminho = iterableMenorCaminho.iterator();
+			Iterator<Rota> menorCaminho = iterableMenorCaminho.iterator();
 			ArrayList<RotaTO> rotasMenorCaminho = new ArrayList<>();
 			while (menorCaminho.hasNext()) {
-				DirectedEdge edge = menorCaminho.next();
+				Rota edge = menorCaminho.next();
 				rotasMenorCaminho.add(this.parseDirectedEdgetoRotaTO(edge));
 			}
 			
-			Collections.reverse(rotas);
+			Collections.reverse(rotasMenorCaminho);
 			
 			return rotasMenorCaminho;
 		
@@ -161,18 +161,18 @@ public class MalhaLogisticaBusinessImpl implements MalhaLogisticaBusiness {
 	/**
 	 * Recupera o índece de um local que será utilizado como origem ou destino para
 	 * o cálculo do menor caminho. A pesquisa do índice é realizada considerando 
-	 * uma lista de entidades {@link DirectedEdge} recuperada da camada DAO. 
+	 * uma lista de entidades {@link Rota} recuperada da camada DAO. 
 	 * 
 	 * @param local nome da localidade que deseja-se obter o índece.
-	 * @param rotas lista de entidades {@link DirectedEdge} que contém as rotas
+	 * @param rotas lista de entidades {@link Rota} que contém as rotas
 	 * de um ponto de origem para um ponto de destino com seus respectivos índices.
 	 * @return representação númerica do índice da localidade dentro da lista de rotas.
 	 * @throws ValidationException exceção lançada caso nenhum índice seja encontrado dentro da lista de rotas.
 	 */
-	private int getLocalIndex(String local, List<DirectedEdge> rotas) throws ValidationException{
+	private int getLocalIndex(String local, List<Rota> rotas) throws ValidationException{
 		Integer index = null;
 		
-		for(DirectedEdge rota : rotas){
+		for(Rota rota : rotas){
 			if(rota.getOrigem().equalsIgnoreCase(local)){
 				index = rota.from();
 				break;

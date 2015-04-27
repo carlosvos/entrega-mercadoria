@@ -2,41 +2,31 @@ package br.com.desafio.entregamercadoria.entity;
 
 /**
  * 
- * 	Código extraído do site <a href="http://algs4.cs.princeton.edu/44sp/">http://algs4.cs.princeton.edu/44sp/</a>
+ *  Código da classe <tt>DirectedEdge</tt>, extraído e adaptado do site <a href="http://algs4.cs.princeton.edu/44sp/">http://algs4.cs.princeton.edu/44sp/</a>
  * 	para auxíliar no cálculo matemático de obtenção do menor caminho considerando dois pontos em um grafo composto
  * 	por vértices e arestas de diferentes pesos conectando-os.
- * 
+ *	<br></br>
  * 	Entidade correspondente a uma rota. Contendo as informações referentes ao local de origem e destino, a distância entre
  * 	eles e seus respectivos índices, utilizados na obtenção do menor caminho.
  * 
- *  The <tt>DirectedEdge</tt> class represents a weighted edge in an 
- *  {@link EdgeWeightedDigraph}. Each edge consists of two integers
- *  (naming the two vertices) and a real-value weight. The data type
- *  provides methods for accessing the two endpoints of the directed edge and
- *  the weight.
- *  <p>
- *  For additional documentation, see <a href="http://algs4.cs.princeton.edu/44sp">Section 4.4</a> of
- *  <i>Algorithms, 4th Edition</i> by Robert Sedgewick and Kevin Wayne.
- *
- *  @author Robert Sedgewick
- *  @author Kevin Wayne
+ *  @author Carlos Vinícius
  */
 
-public class DirectedEdge { 
+public class Rota { 
 	/**
 	 * Índice numérico do local de origem
 	 */
-    private final int v;
+    private final int indexOrigem;
     
     /**
 	 * Índice numérico do local de destino
 	 */
-    private final int w;
+    private final int indexDestino;
     
     /**
 	 * Distância entre os locais de origem e destino
 	 */
-    private final double weight;
+    private final double distancia;
     
     /**
      * Local de origem
@@ -49,58 +39,64 @@ public class DirectedEdge {
     private String destino;
 
     /**
-     * Initializes a directed edge from vertex <tt>v</tt> to vertex <tt>w</tt> with
-     * the given <tt>weight</tt>.
-     * @param v the tail vertex
-     * @param w the head vertex
-     * @param weight the weight of the directed edge
-     * @throws java.lang.IndexOutOfBoundsException if either <tt>v</tt> or <tt>w</tt>
-     *    is a negative integer
-     * @throws IllegalArgumentException if <tt>weight</tt> is <tt>NaN</tt>
+     * Inicializa uma nova rota com os valores dos índices de origem e destino e 
+     * o tamanho do percurso da rota.
+     * 
+     * @param indexOrigem índice de origem
+     * @param indexDestino índice de destino
+     * @param distancia tamanho do percurso da rota em quilometros.
      */
-    public DirectedEdge(int v, int w, double weight) {
-        if (v < 0) throw new IndexOutOfBoundsException("Vertex names must be nonnegative integers");
-        if (w < 0) throw new IndexOutOfBoundsException("Vertex names must be nonnegative integers");
-        if (Double.isNaN(weight)) throw new IllegalArgumentException("Weight is NaN");
-        this.v = v;
-        this.w = w;
-        this.weight = weight;
+    public Rota(int indexOrigem, int indexDestino, double distancia) {
+        if (indexOrigem < 0) throw new IndexOutOfBoundsException("Valor do índice não deve ser negativo");
+        if (indexDestino < 0) throw new IndexOutOfBoundsException("Valor do índice não deve ser negativo");
+        if (Double.isNaN(distancia)) throw new IllegalArgumentException("Distancia não é um número");
+        this.indexOrigem = indexOrigem;
+        this.indexDestino = indexDestino;
+        this.distancia = distancia;
     }
     
-    public DirectedEdge(double weight, String origem, String destino) {
+    /**
+     * Inicializa uma nova rota com os locais de origem e destino e 
+     * o tamanho do percurso da rota.
+     * 
+     * @param origem local de origem
+     * @param destino local de destino
+     * @param distancia tamanho do percurso da rota em quilometros.
+     */
+    public Rota(double distancia, String origem, String destino) {
 		super();
-        if (Double.isNaN(weight)) throw new IllegalArgumentException("Weight is NaN");
-		this.weight = weight;
+        if (Double.isNaN(distancia)) throw new IllegalArgumentException("Distancia não é um número");
+		this.distancia = distancia;
 		this.origem = origem;
 		this.destino = destino;
-		this.v = 0;
-        this.w = 0;
+		this.indexOrigem = 0;
+        this.indexDestino = 0;
 	}
 
 
 
 	/**
-     * Returns the tail vertex of the directed edge.
-     * @return the tail vertex of the directed edge
+     * Retorna o índice da origem
+     * @return índice da origem
      */
     public int from() {
-        return v;
+        return indexOrigem;
     }
 
     /**
-     * Returns the head vertex of the directed edge.
-     * @return the head vertex of the directed edge
+     * Retorna o índice do destino
+     * @return índice da destino
      */
     public int to() {
-        return w;
+        return indexDestino;
     }
 
     /**
-     * Returns the weight of the directed edge.
-     * @return the weight of the directed edge
+     * Retorna a distância entre os locais de origem e destino.
+     * @return a distância entre os locais de origem e destino em quilometros.
      */
     public double weight() {
-        return weight;
+        return distancia;
     }
     
     public String getOrigem() {
@@ -119,12 +115,8 @@ public class DirectedEdge {
 		this.destino = destino;
 	}
 
-	/**
-     * Returns a string representation of the directed edge.
-     * @return a string representation of the directed edge
-     */
     public String toString() {
-        return v + "->" + w + " " + String.format("%5.2f", weight);
+        return origem + "->" + destino + " " + String.format("%5.2f", distancia);
     }
     
 }

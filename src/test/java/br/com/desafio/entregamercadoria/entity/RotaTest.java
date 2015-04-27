@@ -3,12 +3,12 @@ package br.com.desafio.entregamercadoria.entity;
 import org.junit.Test;
 
 /**
- * Teste unitário da entidade {@link DirectedEdge}
+ * Teste unitário da entidade {@link Rota}
  * 
  * @author Carlos Vinícius
  *
  */
-public class DirectedEdgeTest {
+public class RotaTest {
 	
 	private final int V = 12;
 	private final int V_NEGATIVO = -12;
@@ -21,7 +21,7 @@ public class DirectedEdgeTest {
 	 */
 	@Test
 	public void testNewRotaSuccess(){
-        new DirectedEdge(V,W,DISTANCIA);
+        new Rota(V,W,DISTANCIA);
 	}
 	
 	/**
@@ -31,7 +31,7 @@ public class DirectedEdgeTest {
 	 */
 	@Test(expected=IndexOutOfBoundsException.class)
 	public void testNewRotaIndexOrigemMenorZero(){
-        new DirectedEdge(V_NEGATIVO,W,DISTANCIA);
+        new Rota(V_NEGATIVO,W,DISTANCIA);
 	}
 	
 	/**
@@ -41,7 +41,7 @@ public class DirectedEdgeTest {
 	 */
 	@Test(expected=IndexOutOfBoundsException.class)
 	public void testNewRotaIndexDestinoMenorZero(){
-        new DirectedEdge(V,W_NEGATIVO,DISTANCIA);
+        new Rota(V,W_NEGATIVO,DISTANCIA);
 	}
 
 }

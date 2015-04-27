@@ -5,12 +5,12 @@ import java.util.List;
 
 import br.com.desafio.entregamercadoria.business.exception.ValidationException;
 import br.com.desafio.entregamercadoria.business.to.RotaTO;
-import br.com.desafio.entregamercadoria.dao.EdgeWeightedDigraphDAO;
+import br.com.desafio.entregamercadoria.dao.MalhaLogisticaDAO;
 
 /**
  * Interface de negócio responsável por cadastrar as malhas logísiticas e suas rotas ou consultar
  * o menor caminho a partir de uma malha informada. As informações de entrada serão validadas e
- * enviadas para a camada DAO ({@link EdgeWeightedDigraphDAO}), onde serão salvas na base de dados ou utilizadas como 
+ * enviadas para a camada DAO ({@link MalhaLogisticaDAO}), onde serão salvas na base de dados ou utilizadas como 
  * filtros para recuperação de outros dados, fazendo as devidas conversões caso necessário.
  * 
  * @author Carlos Vinícius

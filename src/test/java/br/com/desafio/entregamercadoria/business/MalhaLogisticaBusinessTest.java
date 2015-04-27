@@ -23,9 +23,9 @@ import static org.mockito.Matchers.anyListOf;
 import br.com.desafio.entregamercadoria.business.exception.ValidationException;
 import br.com.desafio.entregamercadoria.business.impl.MalhaLogisticaBusinessImpl;
 import br.com.desafio.entregamercadoria.business.to.RotaTO;
-import br.com.desafio.entregamercadoria.dao.EdgeWeightedDigraphDAO;
-import br.com.desafio.entregamercadoria.entity.DirectedEdge;
-import br.com.desafio.entregamercadoria.entity.EdgeWeightedDigraph;
+import br.com.desafio.entregamercadoria.dao.MalhaLogisticaDAO;
+import br.com.desafio.entregamercadoria.entity.Rota;
+import br.com.desafio.entregamercadoria.entity.MalhaLogistica;
 
 /**
  * Testes unitários da classe de negócio {@link MalhaLogisticaBusinessImpl}.
@@ -40,7 +40,7 @@ public class MalhaLogisticaBusinessTest {
 	private MalhaLogisticaBusiness malhaLogisticaBusiness = new MalhaLogisticaBusinessImpl();
 	
 	@Mock
-	private EdgeWeightedDigraphDAO edgeWeightedDigraphDAO;
+	private MalhaLogisticaDAO malhaLogisticaDAO;
 	
 	private final String NOME_MAPA = "teste_graph_db";
 	
@@ -66,7 +66,7 @@ public class MalhaLogisticaBusinessTest {
 		String nomeMapa = NOME_MAPA;
 		List<RotaTO> listRotaTO = this.createListRotaTO();
 
-		doNothing().when(edgeWeightedDigraphDAO).save(anyString(), anyListOf(DirectedEdge.class));
+		doNothing().when(malhaLogisticaDAO).save(anyString(), anyListOf(Rota.class));
 		
 		malhaLogisticaBusiness.cadastraMalhaLogistica(nomeMapa, listRotaTO);
 	}
@@ -83,7 +83,7 @@ public class MalhaLogisticaBusinessTest {
 		String nomeMapa = NOME_MAPA;
 		List<RotaTO> listRotaTO = this.createListRotaTO();
 
-		doThrow(IOException.class).when(edgeWeightedDigraphDAO).save(anyString(), anyListOf(DirectedEdge.class));
+		doThrow(IOException.class).when(malhaLogisticaDAO).save(anyString(), anyListOf(Rota.class));
 		
 		malhaLogisticaBusiness.cadastraMalhaLogistica(nomeMapa, listRotaTO);
 	}
@@ -100,7 +100,7 @@ public class MalhaLogisticaBusinessTest {
 		String nomeMapa = null;
 		List<RotaTO> listRotaTO = this.createListRotaTO();
 
-		verify(edgeWeightedDigraphDAO, times(0)).save(anyString(), anyListOf(DirectedEdge.class));
+		verify(malhaLogisticaDAO, times(0)).save(anyString(), anyListOf(Rota.class));
 		
 		malhaLogisticaBusiness.cadastraMalhaLogistica(nomeMapa, listRotaTO);
 	}
@@ -117,7 +117,7 @@ public class MalhaLogisticaBusinessTest {
 		String nomeMapa = StringUtils.EMPTY;
 		List<RotaTO> listRotaTO = this.createListRotaTO();
 
-		verify(edgeWeightedDigraphDAO, times(0)).save(anyString(), anyListOf(DirectedEdge.class));
+		verify(malhaLogisticaDAO, times(0)).save(anyString(), anyListOf(Rota.class));
 		
 		malhaLogisticaBusiness.cadastraMalhaLogistica(nomeMapa, listRotaTO);
 	}
@@ -135,7 +135,7 @@ public class MalhaLogisticaBusinessTest {
 		List<RotaTO> listRotaTO = this.createListRotaTO();
 		listRotaTO.add(this.createRotaTO(null, DESTINO, DISTANCIA));
 		
-		verify(edgeWeightedDigraphDAO, times(0)).save(anyString(), anyListOf(DirectedEdge.class));
+		verify(malhaLogisticaDAO, times(0)).save(anyString(), anyListOf(Rota.class));
 		
 		malhaLogisticaBusiness.cadastraMalhaLogistica(nomeMapa, listRotaTO);
 	}
@@ -153,7 +153,7 @@ public class MalhaLogisticaBusinessTest {
 		List<RotaTO> listRotaTO = this.createListRotaTO();
 		listRotaTO.add(this.createRotaTO(StringUtils.EMPTY, DESTINO, DISTANCIA));
 
-		verify(edgeWeightedDigraphDAO, times(0)).save(anyString(), anyListOf(DirectedEdge.class));
+		verify(malhaLogisticaDAO, times(0)).save(anyString(), anyListOf(Rota.class));
 		
 		malhaLogisticaBusiness.cadastraMalhaLogistica(nomeMapa, listRotaTO);
 	}
@@ -171,7 +171,7 @@ public class MalhaLogisticaBusinessTest {
 		List<RotaTO> listRotaTO = this.createListRotaTO();
 		listRotaTO.add(this.createRotaTO(ORIGEM, null, DISTANCIA));
 
-		verify(edgeWeightedDigraphDAO, times(0)).save(anyString(), anyListOf(DirectedEdge.class));
+		verify(malhaLogisticaDAO, times(0)).save(anyString(), anyListOf(Rota.class));
 		
 		malhaLogisticaBusiness.cadastraMalhaLogistica(nomeMapa, listRotaTO);
 	}
@@ -189,7 +189,7 @@ public class MalhaLogisticaBusinessTest {
 		List<RotaTO> listRotaTO = this.createListRotaTO();
 		listRotaTO.add(this.createRotaTO(ORIGEM, StringUtils.EMPTY, DISTANCIA));
 
-		verify(edgeWeightedDigraphDAO, times(0)).save(anyString(), anyListOf(DirectedEdge.class));
+		verify(malhaLogisticaDAO, times(0)).save(anyString(), anyListOf(Rota.class));
 		
 		malhaLogisticaBusiness.cadastraMalhaLogistica(nomeMapa, listRotaTO);
 	}
@@ -207,7 +207,7 @@ public class MalhaLogisticaBusinessTest {
 		List<RotaTO> listRotaTO = this.createListRotaTO();
 		listRotaTO.add(this.createRotaTO(ORIGEM, DESTINO, DISTANCIA_NEGATIVA));
 
-		verify(edgeWeightedDigraphDAO, times(0)).save(anyString(), anyListOf(DirectedEdge.class));
+		verify(malhaLogisticaDAO, times(0)).save(anyString(), anyListOf(Rota.class));
 		
 		malhaLogisticaBusiness.cadastraMalhaLogistica(nomeMapa, listRotaTO);
 	}
@@ -221,7 +221,7 @@ public class MalhaLogisticaBusinessTest {
 	@Test
 	public void testConsultarMenorCaminhoSuccess() throws IOException, ValidationException{
 		
-		when(edgeWeightedDigraphDAO.findByNomMapa(anyString())).thenReturn(this.createMalhaLogistica());
+		when(malhaLogisticaDAO.findByNomMapa(anyString())).thenReturn(this.createMalhaLogistica());
 		
 		List<RotaTO> menorCaminho = malhaLogisticaBusiness.consultarMenorCaminho(NOME_MAPA, "A", "D");
 		
@@ -240,7 +240,7 @@ public class MalhaLogisticaBusinessTest {
 	@Test(expected=IOException.class)
 	public void testConsultarMenorCaminhoFailure() throws IOException, ValidationException{
 		
-		when(edgeWeightedDigraphDAO.findByNomMapa(anyString())).thenThrow(IOException.class);
+		when(malhaLogisticaDAO.findByNomMapa(anyString())).thenThrow(IOException.class);
 		
 		malhaLogisticaBusiness.consultarMenorCaminho(NOME_MAPA, "A", "D");
 		
@@ -257,7 +257,7 @@ public class MalhaLogisticaBusinessTest {
 	public void testConsultarMenorCaminhoNomeMapaNuloFailure() throws IOException, ValidationException{
 		String nomeMapa = null;
 
-		verify(edgeWeightedDigraphDAO, times(0)).findByNomMapa(anyString());
+		verify(malhaLogisticaDAO, times(0)).findByNomMapa(anyString());
 		
 		malhaLogisticaBusiness.consultarMenorCaminho(nomeMapa, ORIGEM, DESTINO);
 	}
@@ -273,7 +273,7 @@ public class MalhaLogisticaBusinessTest {
 	public void testConsultarMenorCaminhoNomeMapaVazioFailure() throws IOException, ValidationException{
 		String nomeMapa = StringUtils.EMPTY;
 
-		verify(edgeWeightedDigraphDAO, times(0)).findByNomMapa(anyString());
+		verify(malhaLogisticaDAO, times(0)).findByNomMapa(anyString());
 		
 		malhaLogisticaBusiness.consultarMenorCaminho(nomeMapa, ORIGEM, DESTINO);
 	}
@@ -288,7 +288,7 @@ public class MalhaLogisticaBusinessTest {
 	@Test(expected=NullPointerException.class)
 	public void testConsultarMenorCaminhoOrigemNuloFailure() throws IOException, ValidationException{
 
-		verify(edgeWeightedDigraphDAO, times(0)).findByNomMapa(anyString());
+		verify(malhaLogisticaDAO, times(0)).findByNomMapa(anyString());
 		
 		malhaLogisticaBusiness.consultarMenorCaminho(NOME_MAPA, null, DESTINO);
 	}
@@ -303,7 +303,7 @@ public class MalhaLogisticaBusinessTest {
 	@Test(expected=IllegalArgumentException.class)
 	public void testConsultarMenorCaminhoOrigemVazioFailure() throws IOException, ValidationException{
 		
-		verify(edgeWeightedDigraphDAO, times(0)).findByNomMapa(anyString());
+		verify(malhaLogisticaDAO, times(0)).findByNomMapa(anyString());
 		
 		malhaLogisticaBusiness.consultarMenorCaminho(NOME_MAPA, StringUtils.EMPTY, DESTINO);
 	}
@@ -318,7 +318,7 @@ public class MalhaLogisticaBusinessTest {
 	@Test(expected=NullPointerException.class)
 	public void testConsultarMenorCaminhoDestinoNuloFailure() throws IOException, ValidationException{
 
-		verify(edgeWeightedDigraphDAO, times(0)).findByNomMapa(anyString());
+		verify(malhaLogisticaDAO, times(0)).findByNomMapa(anyString());
 		
 		malhaLogisticaBusiness.consultarMenorCaminho(NOME_MAPA, ORIGEM, null);
 	}
@@ -333,7 +333,7 @@ public class MalhaLogisticaBusinessTest {
 	@Test(expected=IllegalArgumentException.class)
 	public void testConsultarMenorCaminhoDestinoVazioFailure() throws IOException, ValidationException{
 
-		verify(edgeWeightedDigraphDAO, times(0)).findByNomMapa(anyString());
+		verify(malhaLogisticaDAO, times(0)).findByNomMapa(anyString());
 		
 		malhaLogisticaBusiness.consultarMenorCaminho(NOME_MAPA, ORIGEM, StringUtils.EMPTY);
 	}
@@ -348,7 +348,7 @@ public class MalhaLogisticaBusinessTest {
 	@Test(expected=ValidationException.class)
 	public void testConsultarMenorCaminhoMalhaLogisticaVaziaFailure() throws IOException, ValidationException{
 		
-		when(edgeWeightedDigraphDAO.findByNomMapa(anyString())).thenReturn(new EdgeWeightedDigraph(0));
+		when(malhaLogisticaDAO.findByNomMapa(anyString())).thenReturn(new MalhaLogistica(0));
 		
 		malhaLogisticaBusiness.consultarMenorCaminho(NOME_MAPA, "A", "D");
 	}
@@ -363,7 +363,7 @@ public class MalhaLogisticaBusinessTest {
 	@Test(expected=ValidationException.class)
 	public void testConsultarMenorCaminhoOrigemSemRotaFailure() throws IOException, ValidationException{
 		
-		when(edgeWeightedDigraphDAO.findByNomMapa(anyString())).thenReturn(this.createMalhaLogistica());
+		when(malhaLogisticaDAO.findByNomMapa(anyString())).thenReturn(this.createMalhaLogistica());
 		
 		malhaLogisticaBusiness.consultarMenorCaminho(NOME_MAPA, ORIGEM, "D");
 	}
@@ -378,7 +378,7 @@ public class MalhaLogisticaBusinessTest {
 	@Test(expected=ValidationException.class)
 	public void testConsultarMenorCaminhoDestinoSemRotaFailure() throws IOException, ValidationException{
 		
-		when(edgeWeightedDigraphDAO.findByNomMapa(anyString())).thenReturn(this.createMalhaLogistica());
+		when(malhaLogisticaDAO.findByNomMapa(anyString())).thenReturn(this.createMalhaLogistica());
 		
 		malhaLogisticaBusiness.consultarMenorCaminho(NOME_MAPA, "A", DESTINO);
 	}
@@ -392,10 +392,10 @@ public class MalhaLogisticaBusinessTest {
 	 */
 	@Test(expected=ValidationException.class)
 	public void testConsultarMenorCaminhoOrigemDestinoSemRotaFailure() throws IOException, ValidationException{
-		EdgeWeightedDigraph malhaLogistica = this.createMalhaLogistica();
-		malhaLogistica.addEdge(this.createRota(5, 6, "F", "G", 10d));
+		MalhaLogistica malhaLogistica = this.createMalhaLogistica();
+		malhaLogistica.addRota(this.createRota(5, 6, "F", "G", 10d));
 		
-		when(edgeWeightedDigraphDAO.findByNomMapa(anyString())).thenReturn(malhaLogistica);
+		when(malhaLogisticaDAO.findByNomMapa(anyString())).thenReturn(malhaLogistica);
 		
 		malhaLogisticaBusiness.consultarMenorCaminho(NOME_MAPA, "A", "G");
 	}
@@ -493,27 +493,27 @@ public class MalhaLogisticaBusinessTest {
 	}
 	
 	/**
-	 * cria um objeto da entdiade de malha logística {@link EdgeWeightedDigraph}
+	 * cria um objeto da entdiade de malha logística {@link MalhaLogistica}
 	 * 
-	 * @return uma instância de {@link EdgeWeightedDigraph} 
+	 * @return uma instância de {@link MalhaLogistica} 
 	 */
-	private EdgeWeightedDigraph createMalhaLogistica(){
-		List<DirectedEdge> listRota = this.createListRota();
-		EdgeWeightedDigraph malhaLogistica = new EdgeWeightedDigraph(listRota.size());
-		for(DirectedEdge rota : listRota){
-			malhaLogistica.addEdge(rota);
+	private MalhaLogistica createMalhaLogistica(){
+		List<Rota> listRota = this.createListRota();
+		MalhaLogistica malhaLogistica = new MalhaLogistica(listRota.size());
+		for(Rota rota : listRota){
+			malhaLogistica.addRota(rota);
 		}
 		return malhaLogistica;
 
 	}
 	
 	/**
-	 * cria uma lista de entidades {@link DirectedEdge}
+	 * cria uma lista de entidades {@link Rota}
 	 * 
-	 * @return lista de objetos {@link DirectedEdge}
+	 * @return lista de objetos {@link Rota}
 	 */
-	private List<DirectedEdge> createListRota() {
-		List<DirectedEdge> listRotaTO = new ArrayList<>();
+	private List<Rota> createListRota() {
+		List<Rota> listRotaTO = new ArrayList<>();
 		listRotaTO.add(this.createRota(0,1,"A","B",10d));
 		listRotaTO.add(this.createRota(1,3,"B","D",15d));
 		listRotaTO.add(this.createRota(0,2,"A","C",20d));
@@ -525,16 +525,16 @@ public class MalhaLogisticaBusinessTest {
 	}
 	
 	/**
-	 * cria uma instância da entidade {@link DirectedEdge}
+	 * cria uma instância da entidade {@link Rota}
 	 * @param v índice numérico do local de origem
 	 * @param w índice numérico do local de destino
 	 * @param origem nome do local de origem
 	 * @param destino nome do local de destino
 	 * @param distancia quantidade de quilometros que separam a origem do destino
-	 * @return uma instância da entidade {@link DirectedEdge}
+	 * @return uma instância da entidade {@link Rota}
 	 */
-	private DirectedEdge createRota(int v, int w, String origem, String destino, Double distancia){
-		DirectedEdge rota = new DirectedEdge(v,w,distancia);
+	private Rota createRota(int v, int w, String origem, String destino, Double distancia){
+		Rota rota = new Rota(v,w,distancia);
 		rota.setOrigem(origem);
 		rota.setDestino(destino);
 		return rota;

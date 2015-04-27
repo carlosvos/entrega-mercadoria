@@ -18,10 +18,10 @@ import org.neo4j.graphdb.index.Index;
 import org.neo4j.helpers.collection.IteratorUtil;
 import org.springframework.stereotype.Repository;
 
-import br.com.desafio.entregamercadoria.dao.EdgeWeightedDigraphDAO;
+import br.com.desafio.entregamercadoria.dao.MalhaLogisticaDAO;
 import br.com.desafio.entregamercadoria.dao.Neo4jDAO;
-import br.com.desafio.entregamercadoria.entity.DirectedEdge;
-import br.com.desafio.entregamercadoria.entity.EdgeWeightedDigraph;
+import br.com.desafio.entregamercadoria.entity.Rota;
+import br.com.desafio.entregamercadoria.entity.MalhaLogistica;
 
 /**
  * Implementação da interface de acesso a base de dados que executa as operações de cadastro e busca de uma
@@ -31,21 +31,21 @@ import br.com.desafio.entregamercadoria.entity.EdgeWeightedDigraph;
  *
  */
 @Repository
-public class EdgeWeightedDigraphDAOImpl extends Neo4jDAO implements EdgeWeightedDigraphDAO{
+public class MalhaLogisticaDAOImpl extends Neo4jDAO implements MalhaLogisticaDAO{
 	
     private static Index<Node> indexService;
     private static final String NAME_KEY = "local";
     private static RelationshipType TEM_ROTA_PARA = DynamicRelationshipType.withName( "TEM_ROTA_PARA" );
 
 	@Override
-	public void save(String nomMapa, List<DirectedEdge> rotas) throws IOException{
+	public void save(String nomMapa, List<Rota> rotas) throws IOException{
 	    GraphDatabaseService graphDb = this.getGraphDatabase(nomMapa);
 	    
         try(Transaction tx = graphDb.beginTx()){
         
 		    indexService = graphDb.index().forNodes( "nodes" );
 	
-		    for(DirectedEdge rota : rotas){
+		    for(Rota rota : rotas){
 	    		
 	            Node firstNode = this.getOrCreateNode(rota.getOrigem(), graphDb);
 	            Node secondNode = this.getOrCreateNode(rota.getDestino(), graphDb);
@@ -61,9 +61,9 @@ public class EdgeWeightedDigraphDAOImpl extends Neo4jDAO implements EdgeWeighted
 	}
 
 	@Override
-	public EdgeWeightedDigraph findByNomMapa(String nomMapa) throws IOException{
+	public MalhaLogistica findByNomMapa(String nomMapa) throws IOException{
 	    GraphDatabaseService graphDb = this.getGraphDatabase(nomMapa);
-	    EdgeWeightedDigraph mapaRotas = null;
+	    MalhaLogistica mapaRotas = null;
 	    
         try ( Transaction tx = graphDb.beginTx();
         	      Result result = graphDb.execute( "match (n) WHERE HAS (n.local) return n" ); )
@@ -77,7 +77,7 @@ public class EdgeWeightedDigraphDAOImpl extends Neo4jDAO implements EdgeWeighted
 
 			    Map<String, Integer> mapLocalIndex = createMapaLocaisIndexados(nodes);
 			    
-			    mapaRotas = new EdgeWeightedDigraph(mapLocalIndex.size());
+			    mapaRotas = new MalhaLogistica(mapLocalIndex.size());
 			    
 			    for(Node node : nodes){
 			    	String origem = node.getProperty("local").toString();
@@ -87,11 +87,11 @@ public class EdgeWeightedDigraphDAOImpl extends Neo4jDAO implements EdgeWeighted
 			    		String destino = rota.getEndNode().getProperty("local").toString();
 			    		int w = mapLocalIndex.get(destino);
 			    		
-			    		DirectedEdge edge = new DirectedEdge(v, w, Double.parseDouble(rota.getProperty("distancia").toString()));
+			    		Rota edge = new Rota(v, w, Double.parseDouble(rota.getProperty("distancia").toString()));
 			    		edge.setOrigem(origem);
 			    		edge.setDestino(destino);
 			    		
-			    		mapaRotas.addEdge(edge);
+			    		mapaRotas.addRota(edge);
 			    	}
 			    }
 			    

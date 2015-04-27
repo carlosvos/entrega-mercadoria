@@ -23,22 +23,22 @@ import static org.mockito.Mockito.when;
 import br.com.desafio.entregamercadoria.business.MalhaLogisticaBusiness;
 import br.com.desafio.entregamercadoria.business.exception.ValidationException;
 import br.com.desafio.entregamercadoria.business.to.RotaTO;
-import br.com.desafio.entregamercadoria.service.impl.RotaServiceImpl;
+import br.com.desafio.entregamercadoria.service.impl.MalhaLogisticaServiceImpl;
 import br.com.desafio.entregamercadoria.service.vo.CadastraMalhaLogisticaInputVO;
 import br.com.desafio.entregamercadoria.service.vo.ConsultaMenorCaminhoInputVO;
 import br.com.desafio.entregamercadoria.service.vo.RotaInputVO;
 
 /**
- * Testes unitários da classe de serviço {@link RotaServiceImpl}.
+ * Testes unitários da classe de serviço {@link MalhaLogisticaServiceImpl}.
  * 
  * @author Carlos Vinícius
  *
  */
 @RunWith(MockitoJUnitRunner.class)  
-public class RotaServiceTest {
+public class MalhaLogisticaServiceTest {
 	
 	@InjectMocks
-	private RotaService rotaService = new RotaServiceImpl();
+	private MalhaLogisticaService rotaService = new MalhaLogisticaServiceImpl();
 	
 	@Mock
 	private MalhaLogisticaBusiness malhaLogisticaBusiness;

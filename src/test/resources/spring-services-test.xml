@@ -8,9 +8,9 @@
     <bean id="jacksonProvider" class="org.codehaus.jackson.jaxrs.JacksonJaxbJsonProvider" />
 	
 	<!-- JAX-RS -->
-    <jaxrs:server id="rotas" address="/rotas">
+    <jaxrs:server id="malhaLogistica" address="/malhaLogistica">
         <jaxrs:serviceBeans>
-            <ref bean="rotaServiceImpl" />
+            <ref bean="malhaLogisticaServiceImpl" />
         </jaxrs:serviceBeans>
 		<jaxrs:providers>
 			<ref bean="jacksonProvider" />

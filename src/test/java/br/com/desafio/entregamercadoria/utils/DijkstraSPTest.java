@@ -7,8 +7,8 @@ import java.util.List;
 import org.junit.Assert;
 import org.junit.Test;
 
-import br.com.desafio.entregamercadoria.entity.DirectedEdge;
-import br.com.desafio.entregamercadoria.entity.EdgeWeightedDigraph;
+import br.com.desafio.entregamercadoria.entity.Rota;
+import br.com.desafio.entregamercadoria.entity.MalhaLogistica;
 
 /**
  * Teste unitário da classe utilitária {@link DijkstraSP}
@@ -29,10 +29,10 @@ public class DijkstraSPTest {
 	 */
 	@Test
 	public void testPathToSuccess(){
-		Iterable<DirectedEdge> iterableMenorCaminho = new DijkstraSP(createMalhaLogistica(), S).pathTo(W);
+		Iterable<Rota> iterableMenorCaminho = new DijkstraSP(createMalhaLogistica(), S).pathTo(W);
 		Assert.assertNotNull(iterableMenorCaminho);
 
-		Iterator<DirectedEdge> menorcaminho = iterableMenorCaminho.iterator();
+		Iterator<Rota> menorcaminho = iterableMenorCaminho.iterator();
 		Assert.assertTrue(menorcaminho.hasNext());
 	}
 	
@@ -43,8 +43,8 @@ public class DijkstraSPTest {
 	 */
 	@Test(expected=IllegalArgumentException.class)
 	public void testPathToDistanciaMenorZeroFailure(){
-		EdgeWeightedDigraph malhaLogistica = createMalhaLogistica();
-		malhaLogistica.addEdge(createRota(5, 6, "F", "G", -10d));
+		MalhaLogistica malhaLogistica = createMalhaLogistica();
+		malhaLogistica.addRota(createRota(5, 6, "F", "G", -10d));
 		
 		new DijkstraSP(malhaLogistica, S).pathTo(W);
 		
@@ -55,18 +55,18 @@ public class DijkstraSPTest {
 	 */
 	@Test
 	public void testDijkstraSP(){
-        EdgeWeightedDigraph G = new EdgeWeightedDigraph(V,E);
+        MalhaLogistica G = new MalhaLogistica(V,E);
 
         // compute shortest paths
         DijkstraSP sp = new DijkstraSP(G, S);
 
 
         // print shortest path
-        for (int t = 0; t < G.V(); t++) {
+        for (int t = 0; t < G.getQtdLocais(); t++) {
             if (sp.hasPathTo(t)) {
                 System.out.printf("%d to %d (%.2f)  ", S, t, sp.distTo(t));
                 if (sp.hasPathTo(t)) {
-                    for (DirectedEdge e : sp.pathTo(t)) {
+                    for (Rota e : sp.pathTo(t)) {
                     	System.out.print(e + "   ");
                     }
                 }
@@ -79,27 +79,27 @@ public class DijkstraSPTest {
     }
 	
 	/**
-	 * cria uma instância da entidade {@link EdgeWeightedDigraph}
+	 * cria uma instância da entidade {@link MalhaLogistica}
 	 * 
-	 * @return uma instância de {@link EdgeWeightedDigraph}
+	 * @return uma instância de {@link MalhaLogistica}
 	 */
-	private EdgeWeightedDigraph createMalhaLogistica(){
-		List<DirectedEdge> listRota = this.createListRota();
-		EdgeWeightedDigraph malhaLogistica = new EdgeWeightedDigraph(listRota.size());
-		for(DirectedEdge rota : listRota){
-			malhaLogistica.addEdge(rota);
+	private MalhaLogistica createMalhaLogistica(){
+		List<Rota> listRota = this.createListRota();
+		MalhaLogistica malhaLogistica = new MalhaLogistica(listRota.size());
+		for(Rota rota : listRota){
+			malhaLogistica.addRota(rota);
 		}
 		return malhaLogistica;
 
 	}
 	
 	/**
-	 * cria uma lista de objetos da entidade {@link DirectedEdge}
+	 * cria uma lista de objetos da entidade {@link Rota}
 	 * 
-	 * @return lista contendo instâncias de {@link DirectedEdge}
+	 * @return lista contendo instâncias de {@link Rota}
 	 */
-	private List<DirectedEdge> createListRota() {
-		List<DirectedEdge> listRotaTO = new ArrayList<>();
+	private List<Rota> createListRota() {
+		List<Rota> listRotaTO = new ArrayList<>();
 		listRotaTO.add(this.createRota(0,1,"A","B",10d));
 		listRotaTO.add(this.createRota(1,3,"B","D",15d));
 		listRotaTO.add(this.createRota(0,2,"A","C",20d));
@@ -111,12 +111,12 @@ public class DijkstraSPTest {
 	}
 	
 	/**
-	 * cria uma instância da entidade {@link DirectedEdge}
+	 * cria uma instância da entidade {@link Rota}
 	 * 
-	 * @return uma instância de {@link DirectedEdge}
+	 * @return uma instância de {@link Rota}
 	 */
-	private DirectedEdge createRota(int v, int w, String origem, String destino, Double distancia){
-		DirectedEdge rota = new DirectedEdge(v,w,distancia);
+	private Rota createRota(int v, int w, String origem, String destino, Double distancia){
+		Rota rota = new Rota(v,w,distancia);
 		rota.setOrigem(origem);
 		rota.setDestino(destino);
 		return rota;

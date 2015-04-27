@@ -3,12 +3,12 @@ package br.com.desafio.entregamercadoria.entity;
 import org.junit.Test;
 
 /**
- * Teste unitário da entidade {@link EdgeWeightedDigraph}
+ * Teste unitário da entidade {@link MalhaLogistica}
  * 
  * @author T37954
  *
  */
-public class EdgeWeightedDigraphTest {
+public class MalhaLogisticaTest {
 	
 	private final int V = 12;
 	private final int V_NEGATIVO = -12;
@@ -18,7 +18,7 @@ public class EdgeWeightedDigraphTest {
 	 */
 	@Test
 	public void testNewMalhaLogisticaSuccess(){
-        new EdgeWeightedDigraph(V);
+        new MalhaLogistica(V);
 	}
 	
 	/**
@@ -28,7 +28,7 @@ public class EdgeWeightedDigraphTest {
 	 */
 	@Test(expected=IllegalArgumentException.class)
 	public void testNewMalhaLogisticaRotasMenorZero(){
-        new EdgeWeightedDigraph(V_NEGATIVO);
+        new MalhaLogistica(V_NEGATIVO);
 	}
 
 }

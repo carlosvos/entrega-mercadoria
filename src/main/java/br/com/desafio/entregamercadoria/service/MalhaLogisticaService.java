@@ -12,7 +12,7 @@ import br.com.desafio.entregamercadoria.service.vo.ConsultaMenorCaminhoInputVO;
  * @author Carlos Vinícius
  *
  */
-public interface RotaService {
+public interface MalhaLogisticaService {
 	
 	/**
 	 * Método referenciado na requisição web para cadastro de uma malha logística e suas rotas. O obejto

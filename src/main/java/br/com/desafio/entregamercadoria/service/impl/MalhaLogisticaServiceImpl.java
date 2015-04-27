@@ -20,7 +20,7 @@ import org.springframework.stereotype.Service;
 import br.com.desafio.entregamercadoria.business.MalhaLogisticaBusiness;
 import br.com.desafio.entregamercadoria.business.exception.ValidationException;
 import br.com.desafio.entregamercadoria.business.to.RotaTO;
-import br.com.desafio.entregamercadoria.service.RotaService;
+import br.com.desafio.entregamercadoria.service.MalhaLogisticaService;
 import br.com.desafio.entregamercadoria.service.vo.CadastraMalhaLogisticaInputVO;
 import br.com.desafio.entregamercadoria.service.vo.ConsultaMenorCaminhoInputVO;
 import br.com.desafio.entregamercadoria.service.vo.RotaInputVO;
@@ -34,12 +34,13 @@ import br.com.desafio.entregamercadoria.service.vo.RotaInputVO;
  */
 @Service
 @Path("/")
-public class RotaServiceImpl implements RotaService{
+public class MalhaLogisticaServiceImpl implements MalhaLogisticaService{
 	
 	private static final String CHARSET_UTF8 = "charset=UTF-8";
 	private final String MSG_MENOR_CAMINHO = "Rota {0} com custo de {1}";
 	private final String MSG_CADASTRO_MALHA_LOGISTICA_SUCESSO = "Malha logistica cadastrada com sucesso";
 	private final String MSG_CADASTRO_MALHA_LOGISTICA_ERRO = "Não foi possível realizar o cadastro da malha logistica. [ {0} ]";
+	private final String MSG_CONSULTA_MENOR_CAMINHO_ERRO = "Não foi possível consultar o menor caminho. [ {0} ]";
 	private final String MSG_ERRO_IO = "Problemas de acesso aos dados salvos em banco.";
 	private final String MSG_ERRO_INESPERADO = "Erro inesperado.";
 
@@ -63,7 +64,7 @@ public class RotaServiceImpl implements RotaService{
 		try {           
 			malhaLogisticaBusiness.cadastraMalhaLogistica(input.getNomMalhaLogistica(), rotas);
 			responseBuilder =  Response.ok(MSG_CADASTRO_MALHA_LOGISTICA_SUCESSO);			
-		}catch (ValidationException | IllegalArgumentException e){
+		}catch (ValidationException | IllegalArgumentException | NullPointerException e){
 			responseBuilder = Response.serverError();
 			responseBuilder.entity( MessageFormat.format(MSG_CADASTRO_MALHA_LOGISTICA_ERRO, e.getMessage()));
 		}
@@ -95,17 +96,17 @@ public class RotaServiceImpl implements RotaService{
             		input.getDestino());
             Double custoPercurso = malhaLogisticaBusiness.calcularCustoPercurso(menorCaminho, input.getAutonomia(), input.getVlrCombustivel());
 			responseBuilder =  Response.ok(mensagemFormatada(menorCaminho, custoPercurso));			
-		}catch (ValidationException | IllegalArgumentException e){
+		}catch (ValidationException | IllegalArgumentException | NullPointerException e){
 			responseBuilder = Response.serverError();
-			responseBuilder.entity( MessageFormat.format(MSG_CADASTRO_MALHA_LOGISTICA_ERRO, e.getMessage()));
+			responseBuilder.entity( MessageFormat.format(MSG_CONSULTA_MENOR_CAMINHO_ERRO, e.getMessage()));
 		}
 		catch (IOException e){
 			responseBuilder = Response.serverError();
-			responseBuilder.entity( MessageFormat.format(MSG_CADASTRO_MALHA_LOGISTICA_ERRO, MSG_ERRO_IO));
+			responseBuilder.entity( MessageFormat.format(MSG_CONSULTA_MENOR_CAMINHO_ERRO, MSG_ERRO_IO));
 		}
 		catch (Exception e) {
 			responseBuilder = Response.serverError();
-			responseBuilder.entity( MessageFormat.format(MSG_CADASTRO_MALHA_LOGISTICA_ERRO, MSG_ERRO_INESPERADO));			
+			responseBuilder.entity( MessageFormat.format(MSG_CONSULTA_MENOR_CAMINHO_ERRO, MSG_ERRO_INESPERADO));			
 		}
 				
 		return responseBuilder.build();

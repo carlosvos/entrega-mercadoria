@@ -18,23 +18,23 @@ import org.neo4j.graphdb.Transaction;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import br.com.desafio.entregamercadoria.entity.DirectedEdge;
-import br.com.desafio.entregamercadoria.entity.EdgeWeightedDigraph;
+import br.com.desafio.entregamercadoria.entity.Rota;
+import br.com.desafio.entregamercadoria.entity.MalhaLogistica;
 
 /**
- * Testes unitários da classe DAO {@link EdgeWeightedDigraphDAOImpl}.
+ * Testes unitários da classe DAO {@link MalhaLogisticaDAOImpl}.
  * 
  * @author Carlos Vinícius
  *
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration({"classpath:spring-test.xml"})
-public class EdgeWeightedDigraphDAOTest {
+public class MalhaLogisticaDAOTest {
 	
 	private final String NOME_MAPA = "teste_graph_db";
 	
 	@Resource
-	private EdgeWeightedDigraphDAO edgeWeightedDigraphDAO;
+	private MalhaLogisticaDAO malhaLogisticaDAO;
 	
 	/**
 	 * Após os testes, todas as instâncias dos grafos terão 
@@ -54,23 +54,23 @@ public class EdgeWeightedDigraphDAOTest {
 	 */
 	@Test
 	public void testSaveAndFindMalhaLogisticaSuccess() throws IOException{
-		List<DirectedEdge> rotas = this.createRotas();
-		edgeWeightedDigraphDAO.save(NOME_MAPA, rotas);
+		List<Rota> rotas = this.createRotas();
+		malhaLogisticaDAO.save(NOME_MAPA, rotas);
 
-		EdgeWeightedDigraph malhaLogistica =  edgeWeightedDigraphDAO.findByNomMapa(NOME_MAPA);
+		MalhaLogistica malhaLogistica =  malhaLogisticaDAO.findByNomMapa(NOME_MAPA);
 		Assert.assertNotNull(malhaLogistica);
 
-		rotas = IteratorUtils.toList(malhaLogistica.edges().iterator());
+		rotas = IteratorUtils.toList(malhaLogistica.getRotas().iterator());
 		Assert.assertTrue(CollectionUtils.isNotEmpty(rotas));
 	}
 
 	/**
-	 * cria uma lista de entidades {@link DirectedEdge}
+	 * cria uma lista de entidades {@link Rota}
 	 * 
-	 * @return lista de objetos {@link DirectedEdge}
+	 * @return lista de objetos {@link Rota}
 	 */
-	private List<DirectedEdge> createRotas() {
-		List<DirectedEdge> rotas = new ArrayList<>();
+	private List<Rota> createRotas() {
+		List<Rota> rotas = new ArrayList<>();
 		rotas.add(this.createRota("A","B",10d));
 		rotas.add(this.createRota("B","D",15d));
 		rotas.add(this.createRota("A","C",20d));
@@ -81,16 +81,16 @@ public class EdgeWeightedDigraphDAOTest {
 	}
 	
 	/**
-	 * cria uma instância da entidade {@link DirectedEdge}
+	 * cria uma instância da entidade {@link Rota}
 	 * @param v índice numérico do local de origem
 	 * @param w índice numérico do local de destino
 	 * @param origem nome do local de origem
 	 * @param destino nome do local de destino
 	 * @param distancia quantidade de quilometros que separam a origem do destino
-	 * @return uma instância da entidade {@link DirectedEdge}
+	 * @return uma instância da entidade {@link Rota}
 	 */
-	private DirectedEdge createRota(String origem, String destino, Double distancia){
-		return new DirectedEdge(distancia, origem, destino);
+	private Rota createRota(String origem, String destino, Double distancia){
+		return new Rota(distancia, origem, destino);
 	}
 	
 	/**
