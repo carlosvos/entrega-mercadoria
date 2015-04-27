@@ -5,7 +5,6 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Stack;
 
 import javax.annotation.Resource;
 import javax.ws.rs.Consumes;
@@ -26,6 +25,13 @@ import br.com.desafio.entregamercadoria.service.vo.CadastraMalhaLogisticaInputVO
 import br.com.desafio.entregamercadoria.service.vo.ConsultaMenorCaminhoInputVO;
 import br.com.desafio.entregamercadoria.service.vo.RotaInputVO;
 
+/**
+ * Implementação da interface dos serviços para cadastro de uma malha logística e suas rotas e recuperação
+ * do menor caminho entre um ponto de origem e um ponto de destino.
+ * 
+ * @author Carlos Vinícius
+ *
+ */
 @Service
 @Path("/")
 public class RotaServiceImpl implements RotaService{
@@ -109,11 +115,10 @@ public class RotaServiceImpl implements RotaService{
 	 * Monta a mensagem de resposta do serviço contendo contendo a ordem das localidades considerando o menor caminho e 
 	 * o gasto total para se fazer este percurso
 	 * 
-	 * @param menorCaminho iterador extraido de um objeto {@link Stack} contendo os objetos das rotas do menor caminho. 
-	 * (Devido a esta estrutura de dados, a iteração destes dados retornará a ordem inversa do percurso, Destino -> Origem)
+	 * @param menorCaminho lista contendo os objetos das rotas do menor caminho. 
 	 * 
-	 * @param autonomia quantidade de quilômetros percorridos por litro de combustível
-	 * @param precoCombustivel valor do litro de combustível
+	 * @param custoPercurso custo total do percuso do menor caminho.
+	 * 
 	 * @return {@link String} formatada contendo o menor caminho e o gasto total do percurso.
 	 */
 	private String mensagemFormatada(List<RotaTO> menorCaminho, Double custoPercurso) {
@@ -137,6 +142,13 @@ public class RotaServiceImpl implements RotaService{
 		return MessageFormat.format(MSG_MENOR_CAMINHO, locais, custoPercurso);
 	}
 	
+	/**
+	 * Converte os objetos de entrada {@link RotaInputVO} recebidos na requisição em instãncias de {@link RotaTO}
+	 * para transporte das informações das rotas para a camada de negócio.
+	 * 
+	 * @param rotaInput objeto de entrada das requisições contendo as informações das rotas.
+	 * @return instância de {@link RotaTO} para transporte dos dados para a camada de negócio.
+	 */
 	private RotaTO parseRotaInputVOtoRotaTO(RotaInputVO rotaInput){
 		return new RotaTO(rotaInput.getOrigem(), rotaInput.getDestino(), rotaInput.getDistancia());
 	}

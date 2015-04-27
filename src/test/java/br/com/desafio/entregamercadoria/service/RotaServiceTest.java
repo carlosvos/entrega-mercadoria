@@ -28,6 +28,12 @@ import br.com.desafio.entregamercadoria.service.vo.CadastraMalhaLogisticaInputVO
 import br.com.desafio.entregamercadoria.service.vo.ConsultaMenorCaminhoInputVO;
 import br.com.desafio.entregamercadoria.service.vo.RotaInputVO;
 
+/**
+ * Testes unitários da classe de serviço {@link RotaServiceImpl}.
+ * 
+ * @author Carlos Vinícius
+ *
+ */
 @RunWith(MockitoJUnitRunner.class)  
 public class RotaServiceTest {
 	
@@ -49,6 +55,12 @@ public class RotaServiceTest {
 
 
 	
+	/**
+	 * Teste de sucesso de cadastro de uma malha logísitca e suas rotas.
+	 * 
+	 * @throws IOException
+	 * @throws ValidationException
+	 */
 	@Test
 	public void testcadastraMalhaLogisticaSuccess() throws IOException, ValidationException{
 		
@@ -60,6 +72,13 @@ public class RotaServiceTest {
 		Assert.assertTrue(resposta.getStatus() == Status.OK.getStatusCode());
 	}
 	
+	/**
+	 * Teste falho com o lançamento de uma exceção do tipo
+	 * {@link ValidationException} durante o cadastro de uma malha logísitca e suas rotas.
+	 * 
+	 * @throws IOException
+	 * @throws ValidationException
+	 */
 	@Test
 	public void testcadastraMalhaLogisticaValidationExceptionFailure() throws IOException, ValidationException{
 		
@@ -71,6 +90,13 @@ public class RotaServiceTest {
 		Assert.assertTrue(resposta.getStatus() == Status.INTERNAL_SERVER_ERROR.getStatusCode());
 	}
 	
+	/**
+	 * Teste falho com o lançamento de uma exceção do tipo
+	 * {@link IllegalArgumentException} durante o cadastro de uma malha logísitca e suas rotas.
+	 * 
+	 * @throws IOException
+	 * @throws ValidationException
+	 */
 	@Test
 	public void testcadastraMalhaLogisticaIllegalArgumentExceptionFailure() throws IOException, ValidationException{
 		
@@ -82,6 +108,13 @@ public class RotaServiceTest {
 		Assert.assertTrue(resposta.getStatus() == Status.INTERNAL_SERVER_ERROR.getStatusCode());
 	}
 	
+	/**
+	 * Teste falho com o lançamento de uma exceção do tipo
+	 * {@link IOException} durante o cadastro de uma malha logísitca e suas rotas.
+	 * 
+	 * @throws IOException
+	 * @throws ValidationException
+	 */
 	@Test
 	public void testcadastraMalhaLogisticaIOExceptionFailure() throws IOException, ValidationException{
 		
@@ -93,6 +126,13 @@ public class RotaServiceTest {
 		Assert.assertTrue(resposta.getStatus() == Status.INTERNAL_SERVER_ERROR.getStatusCode());
 	}
 	
+	/**
+	 * Teste falho com o lançamento de uma exceção do tipo
+	 * {@link Exception} durante o cadastro de uma malha logísitca e suas rotas.
+	 * 
+	 * @throws IOException
+	 * @throws ValidationException
+	 */
 	@Test
 	public void testcadastraMalhaLogisticaExceptionFailure() throws IOException, ValidationException{
 		
@@ -104,6 +144,12 @@ public class RotaServiceTest {
 		Assert.assertTrue(resposta.getStatus() == Status.INTERNAL_SERVER_ERROR.getStatusCode());
 	}
 	
+	/**
+	 * Teste de sucesso de consulta do menor caminho e cálculo do gasto total do percurso.
+	 * 
+	 * @throws IOException
+	 * @throws ValidationException
+	 */
 	@Test
 	public void testConsultaMenorCaminhoSuccess() throws IOException, ValidationException{
 		
@@ -116,6 +162,13 @@ public class RotaServiceTest {
 		Assert.assertTrue(resposta.getStatus() == Status.OK.getStatusCode());
 	}
 	
+	/**
+	 * Teste falho com uma exeção do tipo {@link ValidationException} 
+	 * sendo lançada durante a consulta do menor caminho.
+	 * 
+	 * @throws IOException
+	 * @throws ValidationException
+	 */
 	@SuppressWarnings("unchecked")
 	@Test
 	public void testConsultaMenorCaminhoValidationExceptionFailure() throws IOException, ValidationException{
@@ -128,6 +181,13 @@ public class RotaServiceTest {
 		Assert.assertTrue(resposta.getStatus() == Status.INTERNAL_SERVER_ERROR.getStatusCode());
 	}
 	
+	/**
+	 * Teste falho com uma exeção do tipo {@link IllegalArgumentException} 
+	 * sendo lançada durante a consulta do menor caminho.
+	 * 
+	 * @throws IOException
+	 * @throws ValidationException
+	 */
 	@SuppressWarnings("unchecked")
 	@Test
 	public void testConsultaMenorCaminhoIllegalArgumentExceptionFailure() throws IOException, ValidationException{
@@ -140,6 +200,13 @@ public class RotaServiceTest {
 		Assert.assertTrue(resposta.getStatus() == Status.INTERNAL_SERVER_ERROR.getStatusCode());
 	}
 	
+	/**
+	 * Teste falho com uma exeção do tipo {@link IOException} 
+	 * sendo lançada durante a consulta do menor caminho.
+	 * 
+	 * @throws IOException
+	 * @throws ValidationException
+	 */
 	@SuppressWarnings("unchecked")
 	@Test
 	public void testConsultaMenorCaminhoIOExceptionFailure() throws IOException, ValidationException{
@@ -152,6 +219,13 @@ public class RotaServiceTest {
 		Assert.assertTrue(resposta.getStatus() == Status.INTERNAL_SERVER_ERROR.getStatusCode());
 	}
 	
+	/**
+	 * Teste falho com uma exeção do tipo {@link Exception} 
+	 * sendo lançada durante a consulta do menor caminho.
+	 * 
+	 * @throws IOException
+	 * @throws ValidationException
+	 */
 	@SuppressWarnings("unchecked")
 	@Test
 	public void testConsultaMenorCaminhoExceptionFailure() throws IOException, ValidationException{
@@ -164,6 +238,13 @@ public class RotaServiceTest {
 		Assert.assertTrue(resposta.getStatus() == Status.INTERNAL_SERVER_ERROR.getStatusCode());
 	}
 	
+	/**
+	 * Teste falho com uma exeção do tipo {@link IllegalArgumentException} 
+	 * sendo lançada durante o cálculo do custo total do percurso.
+	 * 
+	 * @throws IOException
+	 * @throws ValidationException
+	 */
 	@SuppressWarnings("unchecked")
 	@Test
 	public void testCalcularCustoPercursoIllegalArgumentExceptionFailure() throws IOException, ValidationException{
@@ -177,6 +258,11 @@ public class RotaServiceTest {
 		Assert.assertTrue(resposta.getStatus() == Status.INTERNAL_SERVER_ERROR.getStatusCode());
 	}
 	
+	/**
+	 * cria um objeto {@link ConsultaMenorCaminhoInputVO}
+	 * 
+	 * @return uma instância de {@link ConsultaMenorCaminhoInputVO} 
+	 */
 	private ConsultaMenorCaminhoInputVO createConsultaMenorCaminhoInputVO() {
 		ConsultaMenorCaminhoInputVO consultaInput = new ConsultaMenorCaminhoInputVO();
 		consultaInput.setNomeMapa(NOME_MAPA);
@@ -187,6 +273,11 @@ public class RotaServiceTest {
 		return consultaInput;
 	}
 
+	/**
+	 * cria um objeto {@link CadastraMalhaLogisticaInputVO}
+	 * 
+	 * @return uma instância de {@link CadastraMalhaLogisticaInputVO} 
+	 */
 	private CadastraMalhaLogisticaInputVO createCadastraMalhaLogisticaInputVO(){
 		CadastraMalhaLogisticaInputVO cadastroInput = new CadastraMalhaLogisticaInputVO();
 		cadastroInput.setNomMalhaLogistica(NOME_MAPA);
@@ -194,6 +285,11 @@ public class RotaServiceTest {
 		return cadastroInput;
 	}
 	
+	/**
+	 * cria uma lista de objetos {@link RotaInputVO}
+	 * 
+	 * @return lista de {@link RotaInputVO}
+	 */
 	private List<RotaInputVO> createListRotaInputVO(){
 		List<RotaInputVO> listRotaInputVO = new ArrayList<>();
 		listRotaInputVO.add(this.createRotaInputVO("A","B",10d));
@@ -206,6 +302,11 @@ public class RotaServiceTest {
 		return listRotaInputVO;
 	}
 
+	/**
+	 * cria um objeto {@link RotaInputVO}
+	 * 
+	 * @return uma instância de {@link RotaInputVO} 
+	 */
 	private RotaInputVO createRotaInputVO(String origem, String destino, Double distancia) {
 		RotaInputVO rotaInputVO = new RotaInputVO();
 		rotaInputVO.setOrigem(origem);
@@ -214,6 +315,11 @@ public class RotaServiceTest {
 		return rotaInputVO;
 	}
 	
+	/**
+	 * cria uma lista de objetos {@link RotaTO}
+	 * 
+	 * @return lista de {@link RotaTO}
+	 */
 	private List<RotaTO> createListRotaTO() {
 		List<RotaTO> listRotaTO = new ArrayList<>();
 		listRotaTO.add(this.createRotaTO("A","B",10d));
@@ -226,6 +332,11 @@ public class RotaServiceTest {
 		return listRotaTO;
 	}
 	
+	/**
+	 * cria um objeto {@link RotaTO}
+	 * 
+	 * @return uma instância de {@link RotaTO} 
+	 */
 	private RotaTO createRotaTO(String origem, String destino, Double distancia){
 		return new RotaTO(origem, destino, distancia);
 	}

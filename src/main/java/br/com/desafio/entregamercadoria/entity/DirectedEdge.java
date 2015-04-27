@@ -1,13 +1,14 @@
 package br.com.desafio.entregamercadoria.entity;
 
-/*************************************************************************
- *  Compilation:  javac DirectedEdge.java
- *  Execution:    java DirectedEdge
- *
- *  Immutable weighted directed edge.
- *
- *************************************************************************/
 /**
+ * 
+ * 	Código extraído do site <a href="http://algs4.cs.princeton.edu/44sp/">http://algs4.cs.princeton.edu/44sp/</a>
+ * 	para auxíliar no cálculo matemático de obtenção do menor caminho considerando dois pontos em um grafo composto
+ * 	por vértices e arestas de diferentes pesos conectando-os.
+ * 
+ * 	Entidade correspondente a uma rota. Contendo as informações referentes ao local de origem e destino, a distância entre
+ * 	eles e seus respectivos índices, utilizados na obtenção do menor caminho.
+ * 
  *  The <tt>DirectedEdge</tt> class represents a weighted edge in an 
  *  {@link EdgeWeightedDigraph}. Each edge consists of two integers
  *  (naming the two vertices) and a real-value weight. The data type
@@ -22,11 +23,29 @@ package br.com.desafio.entregamercadoria.entity;
  */
 
 public class DirectedEdge { 
+	/**
+	 * Índice numérico do local de origem
+	 */
     private final int v;
+    
+    /**
+	 * Índice numérico do local de destino
+	 */
     private final int w;
+    
+    /**
+	 * Distância entre os locais de origem e destino
+	 */
     private final double weight;
     
+    /**
+     * Local de origem
+     */
     private String origem;
+    
+    /**
+     * Local de Destino
+     */
     private String destino;
 
     /**

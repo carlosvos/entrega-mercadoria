@@ -2,8 +2,17 @@ package br.com.desafio.entregamercadoria.utils;
 
 import org.junit.Test;
 
+/**
+ * Teste unitário da classe utilitária {@link IndexMinPQ}
+ * 
+ * @author Carlos Vinícius
+ *
+ */
 public class IndexMinPQTest {
 	
+	/**
+	 * Teste de sucesso da execução do algoritimo
+	 */
 	@Test
 	public void testIndexMinPQSuccess(){
         // insert a bunch of strings

@@ -2,11 +2,17 @@ package br.com.desafio.entregamercadoria.business.exception;
 
 import java.text.MessageFormat;
 
+/**
+ * Exceção personalizada disparada quando algum erro de validação ocorre na aplicação.
+ * 
+ * @author Carlos Vinícius
+ *
+ */
 public class ValidationException extends Exception{
 	private static final long serialVersionUID = 1L;
 
 	/**
-     * Constructor.
+     * Construtor.
      *
      * @param msg Mensagem
      */
@@ -14,6 +20,12 @@ public class ValidationException extends Exception{
         super(msg);
     }
     
+    /**
+     * Construtor
+     * 
+     * @param msg Mensagem
+     * @param args parâmetros que serão inclusos nas lacunas da mensagem.
+     */
     public ValidationException(String msg, Object... args) {
         super(MessageFormat.format(msg, args));
     }
@@ -22,7 +34,7 @@ public class ValidationException extends Exception{
      * Constructor.
      *
      * @param msg Mensagem
-     * @param cause Motivo da exceção
+     * @param cause {@link Throwable} referente a causa da exceção.
      */
     public ValidationException(String msg, Throwable cause) {
         super(msg,cause);

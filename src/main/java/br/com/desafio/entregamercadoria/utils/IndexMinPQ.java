@@ -1,17 +1,16 @@
 package br.com.desafio.entregamercadoria.utils;
 
-/*************************************************************************
- *  Compilation:  javac IndexMinPQ.java
- *  Execution:    java IndexMinPQ
- *
- *  Minimum-oriented indexed PQ implementation using a binary heap.
- *
- *********************************************************************/
-
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 /**
+ * 
+ *  Código extraído do site <a href="http://algs4.cs.princeton.edu/44sp/">http://algs4.cs.princeton.edu/44sp/</a>
+ * 	para auxíliar no cálculo matemático de obtenção do menor caminho considerando dois pontos em um grafo composto
+ * 	por vértices e arestas de diferentes pesos conectando-os.
+ * 
+ *  Classe necessária para o cálculo do menor caminho executado por um objeto {@link DijkstraSP}
+ * 
  *  The <tt>IndexMinPQ</tt> class represents an indexed priority queue of generic keys.
  *  It supports the usual <em>insert</em> and <em>delete-the-minimum</em>
  *  operations, along with <em>delete</em> and <em>change-the-key</em> 

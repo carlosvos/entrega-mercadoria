@@ -16,6 +16,14 @@ import java.util.Stack;
  *************************************************************************/
 
 /**
+ * 
+ * 	Código extraído do site <a href="http://algs4.cs.princeton.edu/44sp/">http://algs4.cs.princeton.edu/44sp/</a>
+ * 	para auxíliar no cálculo matemático de obtenção do menor caminho considerando dois pontos em um grafo composto
+ * 	por vértices e arestas de diferentes pesos conectando-os.
+ * 
+ * 	Entidade correspondente a uma malha logística. Encapsulando as instâncias das entidades {@link DirectedEdge}, correspondentes
+ * 	as rotas.
+ * 
  *  The <tt>EdgeWeightedDigraph</tt> class represents a edge-weighted
  *  digraph of vertices named 0 through <em>V</em> - 1, where each
  *  directed edge is of type {@link DirectedEdge} and has a real-valued weight.
@@ -39,8 +47,20 @@ import java.util.Stack;
  *  @author Kevin Wayne
  */
 public class EdgeWeightedDigraph {
+	
+	/**
+	 * Quantidade localidades que a malha é composta.
+	 */
     private final int V;
+    
+    /**
+     * Quantidade de rotas entre as localidades
+     */
     private int E;
+    
+    /**
+     * Instâncias das entidades {@link DirectedEdge}
+     */
     private List<DirectedEdge>[] adj;
     
     /**

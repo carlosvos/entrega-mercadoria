@@ -23,6 +23,13 @@ import br.com.desafio.entregamercadoria.dao.Neo4jDAO;
 import br.com.desafio.entregamercadoria.entity.DirectedEdge;
 import br.com.desafio.entregamercadoria.entity.EdgeWeightedDigraph;
 
+/**
+ * Implementação da interface de acesso a base de dados que executa as operações de cadastro e busca de uma
+ * malha logística e suas rotas.
+ * 
+ * @author Carlos Vinícius
+ *
+ */
 @Repository
 public class EdgeWeightedDigraphDAOImpl extends Neo4jDAO implements EdgeWeightedDigraphDAO{
 	
@@ -94,6 +101,15 @@ public class EdgeWeightedDigraphDAOImpl extends Neo4jDAO implements EdgeWeighted
 	    return mapaRotas;
 	}
 	
+	/**
+	 * Busca ou cria um nó no grafo referente a localidade passada como parâmetro.
+	 * 
+	 * @param local nome da origem ou destino que serão salvos ou recuperados no grafo.
+	 * @param graphDb grafo contendo as informações referentes as localidaedes e suas distâncias.
+	 * Este obejto representa a malha logística onde deseja-se salvar as informações das rotas.
+	 * 
+	 * @return nó correspondente ao local salvo ou encontrado no grafo.
+	 */
 	private Node getOrCreateNode( String local, GraphDatabaseService graphDb )
     {
         Node node = indexService.get( NAME_KEY, local ).getSingle();
@@ -106,6 +122,14 @@ public class EdgeWeightedDigraphDAOImpl extends Neo4jDAO implements EdgeWeighted
         return node;
     }
 	
+	/**
+	 * Cria um {@link Map} a partir dos nós encontrados. Para cada nó da lista,
+	 * um contador será incrementado e atribuido no mapa, correspondendo ao índice 
+	 * daquela localidade.
+	 * 
+	 * @param nodes lista de nós de localidades encontrados no grafo.
+	 * @return {@link Map} contendo os nomes dos locais e seus respectivos índices gerados.
+	 */
 	private Map<String, Integer> createMapaLocaisIndexados(List<Node> nodes){
 		Map<String, Integer> mapaLocaisIndexados = new HashMap<String, Integer>();
 	    

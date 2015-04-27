@@ -6,13 +6,30 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
+/**
+ * Objeto de entrada do serviço de cadsatro contendo as informações de origem, destino e distância da rota.
+ * 
+ * @author Carlos Vinícius
+ *
+ */
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RotaInputVO implements Serializable{
 	private static final long serialVersionUID = 1L;
 
+	/**
+	 * nome do local de origem.
+	 */
 	private String origem;
+	
+	/**
+	 * nome do local de destino.
+	 */
 	private String destino;
+	
+	/**
+	 * distância entre o ponto de origem e o ponto de destino.
+	 */
 	private Double distancia;
 	
 	public String getOrigem() {

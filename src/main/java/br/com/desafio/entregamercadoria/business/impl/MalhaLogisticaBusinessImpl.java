@@ -23,6 +23,13 @@ import br.com.desafio.entregamercadoria.entity.DirectedEdge;
 import br.com.desafio.entregamercadoria.entity.EdgeWeightedDigraph;
 import br.com.desafio.entregamercadoria.utils.DijkstraSP;
 
+/**
+ * Implementação da interface de negócio para cadastro das malhas logísticas e consulta de menor caminho 
+ * considerando um determinado percurso.
+ * 
+ * @author Carlos Vinícus
+ *
+ */
 @Service
 public class MalhaLogisticaBusinessImpl implements MalhaLogisticaBusiness {
 	
@@ -60,6 +67,19 @@ public class MalhaLogisticaBusinessImpl implements MalhaLogisticaBusiness {
 		}
 	}
 
+	/**
+	 * Converte o objeto de entrada {@link RotaTO} para a entidade {@link DirectedEdge} que sera utilizada
+	 * como referência para persistência das informções referentes a rota.
+	 * 
+	 * @param rotaTO objeto de entrada contendo as informações de origem, destino e distância de um rota.
+	 * @return entidade {@link DirectedEdge} utilizada para recuperação dos dados que serão salvos na base de dados.
+	 * @throws ValidationException exceção lançada caso ocorra um dos sequintes erros de validação:
+	 * <ul>
+	 * <li>valor de origem do objeto {@link RotaTO} seja nulo ou vazio;</li>
+	 * <li>valor de destino do objeto {@link RotaTO} seja nulo ou vazio;</li>
+ 	 * <li>valor da distância do objeto {@link RotaTO} seja menor que zero</li>
+ 	 * </ul>
+	 */
 	private DirectedEdge parseRotaTOtoDirectedEdge(RotaTO rotaTO) throws ValidationException{
 		Validate.notBlank(rotaTO.getOrigem(),MSG_ORIGEM_INVALIDA);
 		Validate.notBlank(rotaTO.getDestino(),MSG_DESTINO_INVALIDO);
@@ -67,6 +87,13 @@ public class MalhaLogisticaBusinessImpl implements MalhaLogisticaBusiness {
 		return new DirectedEdge(rotaTO.getDistancia(), rotaTO.getOrigem(), rotaTO.getDestino());
 	}
 	
+	/**
+	 * Converte a entidade {@link DirectedEdge} para um objeto {@link RotaTO} que será utilizado para construção 
+	 * da mensagem de retorno.
+	 * 
+	 * @param edge entidade {@link DirectedEdge} correspondente ao registro de uma rota.
+	 * @return objeto {@link RotaTO} contendo as mesmas informações da entidade passada como parâmetro.
+	 */
 	private RotaTO parseDirectedEdgetoRotaTO(DirectedEdge edge) {
 		return new RotaTO(edge.getOrigem(),edge.getDestino(),edge.weight());
 	}
@@ -131,6 +158,17 @@ public class MalhaLogisticaBusinessImpl implements MalhaLogisticaBusiness {
 		return this.calcularCustoPercurso(distancia, autonomia, precoCombustivel);
 	}
 	
+	/**
+	 * Recupera o índece de um local que será utilizado como origem ou destino para
+	 * o cálculo do menor caminho. A pesquisa do índice é realizada considerando 
+	 * uma lista de entidades {@link DirectedEdge} recuperada da camada DAO. 
+	 * 
+	 * @param local nome da localidade que deseja-se obter o índece.
+	 * @param rotas lista de entidades {@link DirectedEdge} que contém as rotas
+	 * de um ponto de origem para um ponto de destino com seus respectivos índices.
+	 * @return representação númerica do índice da localidade dentro da lista de rotas.
+	 * @throws ValidationException exceção lançada caso nenhum índice seja encontrado dentro da lista de rotas.
+	 */
 	private int getLocalIndex(String local, List<DirectedEdge> rotas) throws ValidationException{
 		Integer index = null;
 		
