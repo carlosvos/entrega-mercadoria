@@ -21,7 +21,7 @@ public class ConsultaMenorCaminhoInputVO implements Serializable {
 	/**
 	 * nome da malha logística onde será feita a consulta do menor caminho.
 	 */
-	private String nomeMapa;
+	private String nomMalhaLogistica;
 	
 	/**
 	 * nome do local de origem.
@@ -67,11 +67,11 @@ public class ConsultaMenorCaminhoInputVO implements Serializable {
 	public void setVlrCombustivel(Double vlrCombustivel) {
 		this.vlrCombustivel = vlrCombustivel;
 	}
-	public String getNomeMapa() {
-		return nomeMapa;
+	public String getNomMalhaLogistica() {
+		return nomMalhaLogistica;
 	}
-	public void setNomeMapa(String nomeMapa) {
-		this.nomeMapa = nomeMapa;
+	public void setNomMalhaLogistica(String nomMalhaLogistica) {
+		this.nomMalhaLogistica = nomMalhaLogistica;
 	}
 	
 }

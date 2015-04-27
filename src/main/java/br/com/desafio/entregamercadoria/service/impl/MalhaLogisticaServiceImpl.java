@@ -91,7 +91,7 @@ public class MalhaLogisticaServiceImpl implements MalhaLogisticaService{
 
 		try {           
             List<RotaTO> menorCaminho = malhaLogisticaBusiness.consultarMenorCaminho(
-            		input.getNomeMapa(), 
+            		input.getNomMalhaLogistica(), 
             		input.getOrigem(), 
             		input.getDestino());
             Double custoPercurso = malhaLogisticaBusiness.calcularCustoPercurso(menorCaminho, input.getAutonomia(), input.getVlrCombustivel());

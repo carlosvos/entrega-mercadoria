@@ -265,7 +265,7 @@ public class MalhaLogisticaServiceTest {
 	 */
 	private ConsultaMenorCaminhoInputVO createConsultaMenorCaminhoInputVO() {
 		ConsultaMenorCaminhoInputVO consultaInput = new ConsultaMenorCaminhoInputVO();
-		consultaInput.setNomeMapa(NOME_MAPA);
+		consultaInput.setNomMalhaLogistica(NOME_MAPA);
 		consultaInput.setOrigem(ORIGEM);
 		consultaInput.setDestino(DESTINO);
 		consultaInput.setAutonomia(AUTONOMIA);
